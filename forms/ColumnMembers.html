@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="DefaultColumnMembers.css">
+    <title>Select Column Members</title>
+</head>
+<body>
+
+    <!--Search box area-->
+    <div class="block">
+        <label for="search">Search</label>
+        <input type="text" placeholder="ex: Cap%">
+    </div>
+
+    <!--Limit and paging area-->
+    <div class="block">
+        <label for="limit"></label>
+        <select name="limit" id="limit">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+
+        <button type="button" id="priorPage">Prior Page</button>
+        <button type="button" id="nextPage">Next Page</button>
+    </div>
+    
+    <!--Member selection area-->
+    <div class="block">
+        <label for="availableMembers">Available Column Members</label>
+        <select name="availableMembers" id="availableMembers" size="20" multiple autofocus>
+        </select>
+    
+        <button type="button" id="addMembers">>>></button>
+        <button type="button" id="removeMembers"><<<</button>
+
+        <label for="selectedMembers">Selected Column Members</label>
+        <select name="selectedMembers" id="selectedMembers" size="20" multiple>
+        </select>
+
+        <button type="button" id="moveUp">Up</button>
+        <button type="button" id="moveDown">Down</button>
+    </div>
+
+    <!--Submission and Cancel button area-->
+    <div>
+        <input type="button" value="OK" id="ok">
+        <button type="button" id="cancel">Cancel</button>
+    </div>
+
+    <!--For testing purposes only
+        <input type="text" name="parentField" id="parentField">
+    -->
+
+    <script src="ColumnMembers.js"></script>
+</body>
+</html>

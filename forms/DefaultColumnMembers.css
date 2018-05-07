@@ -1,0 +1,19 @@
+body {
+    background: #f6ebe5;
+    color: #808080;
+    font-family: 'Varela Round', Helvetica, Arial, sans-serif;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 16px;
+    padding-bottom: 80px;
+}
+
+select {
+    width:200px;
+}
+
+.block {
+    display: block;
+}
+
+
