@@ -144,17 +144,30 @@ class ColumnMembers {
     }
 
     updateAvailableMembersHTML() {
-        for (var member in this.availableMembers) {
-            $('#availableMembers').append('<option value=' + member + '>' + member + '</option>');
+        this.clearOptions(document.getElementById('availableMembers'));
+
+        for (var i=0; i<this.availableMembers.length; i++) {
+            var option = document.createElement("option");
+            option.text = this.availableMembers[i];
+            option.value = this.availableMembers[i];
+            document.getElementById('availableMembers').add(option);
         }
     }
 
     updateSelectedMembersHTML() {
+        this.clearOptions(document.getElementById('selectedMembers'));
+
         for (var i=0; i<this.selectedMembers.length; i++) {
             var option = document.createElement("option");
             option.text = this.selectedMembers[i];
             option.value = this.selectedMembers[i];
             document.getElementById('selectedMembers').add(option);
+        }
+    }
+
+    clearOptions(selectElement) {
+        for (var i=selectElement.options.length-1; i>=0; i--) {
+            selectElement.remove(i);
         }
     }
 
@@ -177,7 +190,7 @@ document.getElementById('addMembers').onclick = function() {
     
     for (var i=0; i<options.length; i++) {
         var opt = options[i];
-        if (opt.selected) results.push(opt.value);
+        if (opt.selected) result.push(opt.value);
     }
     
     columnMembersWindow.addSelectedMembers(result);
