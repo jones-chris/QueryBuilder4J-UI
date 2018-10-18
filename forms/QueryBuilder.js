@@ -1,3 +1,22 @@
+function sendAjaxRequest(endpoint, paramString, method, callbackFunction) {
+    $.ajax({
+        method: method,
+        url: endpoint,
+        data: paramString,
+        success: function(responseText) {
+            alert(responseText);
+            callbackFunction(responseText);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            alert('There was an error retrieving the database schemas');
+            alert(jqXHR);
+            alert(textStatus);
+            alert(errorThrown);
+        },
+        dataType: 'json'
+      });
+}
+
 class QueryBuilder {
     constructor() {
         this.columnMembersWindow = null;
@@ -10,6 +29,7 @@ class QueryBuilder {
         this.queryTemplates = null; // set to [] to render
         this.schemas = null; // set to [] to render
         this.tables = null; // set to [] to render
+        this.allowJoins = false;
         this.availableColumns = null; // set to [] to render
         this.selectedColumns = null; // set to [] to render
         this.criteria = null; // set to [] to render
@@ -204,62 +224,66 @@ class QueryBuilder {
         }
 
         el = this.renderQueryTemplatesHTML();
-        if (el !== null)
+        if (el !== undefined)
             form.appendChild(el);
 
         //Schemas
         el = this.renderSchemaHTML();
-        if (el !== null)
+        if (el !== undefined)
             form.appendChild(el);
 
         //Tables
         el = this.renderTablesHTML();
-        if (el !== null)
+        if (el !== undefined)
+            form.appendChild(el);
+
+        el = this.renderJoinsHTML();
+        if (el !== undefined)
             form.appendChild(el);
 
         //Available Columns
         el = this.renderAvailableColumnsHTML();
-        if (el !== null) 
+        if (el !== undefined) 
             form.appendChild(el);
 
         //SelectedColumns
-        el = this.renderSelectedColumnsHTML();
-        if (el !== null)
-            form.appendChild(el);
+        // el = this.renderSelectedColumnsHTML();
+        // if (el !== undefined)
+        //     form.appendChild(el);
 
         //Criteria
         el = this.renderCriteriaHTML();
-        if (el !== null) 
+        if (el !== undefined) 
             form.appendChild(el);
 
         //Distinct
         el = this.renderDistinctHTML();
-        if (el !== null)
+        if (el !== undefined)
             form.appendChild(el);
 
         //Order By
         el = this.renderOrderByHTML();
-        if (el !== null)
+        if (el !== undefined)
             form.appendChild(el);
 
         //Group By
         el = this.renderGroupByHTML();
-        if (el !== null)
+        if (el !== undefined)
             form.appendChild(el);
 
         //Suppress Nulls
         el = this.renderSuppressNullsHTML();
-        if (el !== null)
+        if (el !== undefined)
             form.appendChild(el);
 
         //Limit
         el = this.renderLimitHTML();
-        if (el !== null)
+        if (el !== undefined)
             form.appendChild(el);
 
         //Offset
         el = this.renderOffsetHTML();
-        if (el !== null)
+        if (el !== undefined)
             form.appendChild(el);
 
         if (beforeNode === undefined) {
@@ -273,21 +297,6 @@ class QueryBuilder {
     //===========================================================================
     //                      PRIVATE METHODS
     //===========================================================================
-    
-    sendAjaxRequest(endpoint, paramString, method) {
-        $.ajax({
-            method: method,
-            url: endpoint,
-            data: paramString,
-            success: function(reponseText) {
-                alert(responseText);
-            }
-          });
-        //   .done(this.queryTemplates = responseText);
-            // .done(function( msg ) {
-            //   alert( "Data Saved: " + msg );
-            // });
-    }
 
     fillArrayProperty(arrayPropertyName, data) {
         for (var i=0; i<data.length; i++) {
@@ -377,16 +386,24 @@ class QueryBuilder {
             let attributesMap = {
                 'id': 'schemas',
                 'name': 'schemas',
-                'class': 'form-control'
+                'class': 'form-control',
+                'size': this.schemasSize
             };
 
             let select = this.createNewElement('select', attributesMap, this.schemas);
             let label = this.createNewElement('label', {'for': 'schemas'});
             label.innerHTML = 'Database Schemas';
+            let getSchemasButton = this.createNewElement('button', {'id': 'getSchemasButton', 'name': 'getSchemasButton', 'type': 'button'});
+            let getSchemaEndpoint = this.getSchemaEndpoint;
+            getSchemasButton.onclick = function() {
+                sendAjaxRequest(getSchemaEndpoint, null, 'GET');
+            }
+            getSchemasButton.innerHTML = 'Get Schemas';
 
             let div = this.createNewElement('div', {'id': 'schemasDiv', 'class': 'schemas-div'});
             div.appendChild(label);
             div.appendChild(select);
+            div.appendChild(getSchemasButton);
 
             return div;
         }
@@ -398,61 +415,99 @@ class QueryBuilder {
                 'id': 'tables',
                 'name': 'tables',
                 'multiple': 'true',
-                'class': 'form-control'
+                'class': 'form-control',
+                'size': this.tablesSize
             };
             
             let select = this.createNewElement('select', attributesMap, this.tables);
             let label = this.createNewElement('label', {'for': 'tables'});
             label.innerHTML = 'Database Tables';
+            let getTablesButton = this.createNewElement('button', {'id': 'getTablesButton', 'name': 'getTablesButton', 'type': 'button'});
+            // let getTablesEndpoint = this.getTablesEndpoint;
+            let getTables = this.getTables;
+            getTablesButton.onclick = function() {
+                getTables()
+            }
+            // getTablesButton.onclick = function() {
+            //     let schema = document.getElementById('schemas').value;
+            //     if (schema !== "") {
+            //         sendAjaxRequest(getTablesEndpoint + schema, null, 'GET');
+            //     } else {
+            //         alert('Please select a schema before retrieving tables');
+            //     }
+            // }
+            getTablesButton.innerHTML = 'Get Tables';
 
             let div = this.createNewElement('div', {'id': 'tablesDiv', 'class': 'tables-div'});
             div.appendChild(label);
             div.appendChild(select);
+            div.appendChild(getTablesButton);
 
             return div;
+        }
+    }
+
+    renderJoinsHTML() {
+        if (this.allowJoins) {
+            return this.createNewElement('div', {'id': 'joinsDiv', 'class': 'joins-div', 'border-style': 'groove'});
         }
     }
 
     renderAvailableColumnsHTML() {
         if (this.availableColumns !== null) {
-            let attributesMap = {
+            let attributesMapAvailableColumns = {
                 'id': 'availableColumns',
                 'name': 'availableColumns',
                 'multiple': 'true',
-                'class': 'form-control'
+                'class': 'form-control',
+                'size': this.availableColumnsSize
             };
             
-            let select = this.createNewElement('select', attributesMap, this.availableColumns);
-            let label = this.createNewElement('label', {'for': 'availableColumns'});
-            label.innerHTML = 'Table Columns';
+            let selectAvailableColumns = this.createNewElement('select', attributesMapAvailableColumns, this.availableColumns);
+            let labelAvailableColumns = this.createNewElement('label', {'for': 'availableColumns'});
+            labelAvailableColumns.innerHTML = 'Table Columns';
 
-            let div = this.createNewElement('div', {'id': 'availableColumnsDiv', 'class': 'available-columns-div'});
-            div.appendChild(label);
-            div.appendChild(select);
-
-            return div;
-        }
-    }
-
-    renderSelectedColumnsHTML() {
-        if (this.selectedColumns !== null) {
-            let attributesMap = {
+            let attributesMapSelectedColumns = {
                 'id': 'selectedColumns',
                 'name': 'selectedColumns',
-                'class': 'form-control'
+                'class': 'form-control',
+                'size': this.selectedColumnsSize
             };
             
-            let select = this.createNewElement('select', attributesMap, this.selectedColumns);
-            let label = this.createNewElement('label', {'for': 'selectedColumns'});
-            label.innerHTML = 'Selected Columns';
+            let selectSelectedColumns = this.createNewElement('select', attributesMapSelectedColumns, this.selectedColumns);
+            let labelSelectedColumns = this.createNewElement('label', {'for': 'selectedColumns'});
+            labelSelectedColumns.innerHTML = 'Selected Columns';
 
-            let div = this.createNewElement('div', {'id': 'selectedColumnsDiv', 'class': 'selected-columns-div'});
-            div.appendChild(label);
-            div.appendChild(select);
+            let div = this.createNewElement('div', {'id': 'availableColumnsDiv', 'class': 'available-columns-div'});
+            div.appendChild(labelAvailableColumns);
+            div.appendChild(selectAvailableColumns);
+            div.appendChild(labelSelectedColumns);
+            div.appendChild(selectSelectedColumns);
 
             return div;
         }
     }
+
+    // renderSelectedColumnsHTML() {
+    //     if (this.selectedColumns !== null) {
+    //         let attributesMap = {
+    //             'id': 'selectedColumns',
+    //             'name': 'selectedColumns',
+    //             'class': 'form-control',
+    //             'size': this.selectedColumnsSize
+    //         };
+            
+    //         let select = this.createNewElement('select', attributesMap, this.selectedColumns);
+    //         let label = this.createNewElement('label', {'for': 'selectedColumns'});
+    //         label.innerHTML = 'Selected Columns';
+
+    //         let div = this.createNewElement('div', {'id': 'selectedColumnsDiv', 'class': 'selected-columns-div'});
+    //         div.appendChild(label);
+    //         div.appendChild(select);
+
+    //         return div;
+    //     }
+    // }
 
     renderCriteriaHTML() {
         let attributesMap = {
@@ -529,8 +584,8 @@ class QueryBuilder {
         if (dataProperty !== null) {
             for (var i=0; i<dataProperty.length; i++) {
                 var option = document.createElement("option");
-                option.text = [dataProperty][i];
-                option.value = [dataProperty][i];
+                option.text = dataProperty[i];
+                option.value = dataProperty[i];
                 document.getElementById(HtmlId).add(option);
             }
         }

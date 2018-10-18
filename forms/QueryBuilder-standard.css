@@ -40,7 +40,7 @@ nav {
 .form-control {
     display: block;
     width: fit-content;
-    height: calc(2.25rem + 2px);
+    /* height: calc(2.25rem + 2px); */
     padding: 0.375rem 0.75rem;
     font-size: 1rem;
     line-height: 1.5;
@@ -73,8 +73,8 @@ nav {
       text-align: left;
   }
 
-  .available-tables-div {
-      text-align: left;
+  .joins-div {
+      text-align: center;
   }
 
   .available-columns-div {
