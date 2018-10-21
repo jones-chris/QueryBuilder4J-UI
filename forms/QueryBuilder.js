@@ -79,21 +79,26 @@ class QueryBuilder {
     }
 
     getSchemas() {
-        let schemas = this.sendAjaxRequest(this.getSchemaEndpoint, null, "GET");
+        let schemas = sendAjaxRequest(this.getSchemaEndpoint, null, "GET");
         this.fillArrayProperty('schemas', schemas);
         this.syncSelectOptionsWithDataModel('schemas', this.schemas);
         //this.updateSchemasHTML();
     }
 
-    getTables() {
-        let tables = this.sendAjaxRequest(this.getTablesEndpoint, null, "GET");
-        this.fillArrayProperty('tables', tables);
-        this.syncSelectOptionsWithDataModel('tables', this.tables);
-        //this.updateTablesHTML();
+    getTables(schema) {
+        let fillArrayPropertyFunc = this.fillArrayProperty; 
+        let syncSelectOptionsWithDataModelFunc = this.syncSelectOptionsWithDataModel;
+        sendAjaxRequest(this.getTablesEndpoint + schema, 
+                                    null, 
+                                    "GET", 
+                                    function (tablesData) {
+                                        fillArrayPropertyFunc('tables', tablesData);
+                                        syncSelectOptionsWithDataModelFunc('tables', this.tables);
+                                    });
     }
 
     getAvailableColumns() {
-        let columns = this.sendAjaxRequest(this.getColumnsEndpoint, null, "GET");
+        let columns = sendAjaxRequest(this.getColumnsEndpoint, null, "GET");
         this.fillArrayProperty('columns', columns);
         this.syncSelectOptionsWithDataModel('columns', this.availableColumns);
         //this.updateAvailableColumnsHTML();
@@ -424,10 +429,6 @@ class QueryBuilder {
             label.innerHTML = 'Database Tables';
             let getTablesButton = this.createNewElement('button', {'id': 'getTablesButton', 'name': 'getTablesButton', 'type': 'button'});
             // let getTablesEndpoint = this.getTablesEndpoint;
-            let getTables = this.getTables;
-            getTablesButton.onclick = function() {
-                getTables()
-            }
             // getTablesButton.onclick = function() {
             //     let schema = document.getElementById('schemas').value;
             //     if (schema !== "") {

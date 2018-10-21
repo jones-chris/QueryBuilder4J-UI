@@ -17,3 +17,12 @@ qb.limitChoices = [5, 10, 50, 500];
 qb.offsetChoices = [5, 10, 50, 500];
 
 qb.renderHTML();
+
+document.getElementById('getTablesButton').onclick = function() {
+    let schema = document.getElementById('schemas').value;
+    if (schema !== "") {
+        qb.getTables(schema);
+    } else {
+        alert('Please select a schema before retrieving tables');
+    }
+}
