@@ -84,5 +84,24 @@ nav {
 } */
 
 .criteria-row {
-    padding-left: 0px
+    padding-left: 0px;
+}
+
+.query-templates-div {
+    display: inline-grid;
+    padding-top: 10px;
+}
+
+.schemas-div {
+    display: inline-grid;
+    padding-top: 10px;
+}
+
+.tables-div {
+    display: inline-grid;
+    padding-top: 10px;
+}
+
+.available-columns-div {
+    display: inline-flex;
 }

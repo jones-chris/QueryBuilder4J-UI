@@ -5,6 +5,39 @@ let getTablesEndpoint = "http://localhost:8080/tablesAndViews/";
 let getColumnsEndpoint = "http://localhost:8080/columns/";
 let formSubmissionEndpoint = "http://localhost:8080/query";
 let formMethod = "POST";
+let formSubmissionFunction = function () {
+    $.ajax({
+        type: 'POST',
+        url: $('#qb').attr('action'),
+        data: $('#qb').serialize(),
+        success: function(data) {
+            console.log(data);
+            document.getElementById('ajaxError').innerHTML = null;
+            document.getElementById('queryResults').innerHTML = data.queryResults[0];
+            document.getElementById('sqlResult').innerHTML = data.sqlResult[0];
+            document.getElementById('databaseExists').innerHTML = data.databaseExists;
+            document.getElementById('tableExists').innerHTML = data.tableExists;
+            document.getElementById('numOfTablesIsSame').innerHTML = data.tablesAreSame;
+            document.getElementById('numOfColumnsIsSame').innerHTML = data.numOfTableColumnsAreSame;
+            document.getElementById('numOfRowsIsSame').innerHTML = data.numOfTableRowsAreSame;
+            document.getElementById('tableDataIsSame').innerHTML = data.tableDataIsSame;
+        },
+        error: function(textStatus, errorThrown) {
+            console.log(textStatus);
+            console.log(errorThrown);
+            document.getElementById('ajaxError').innerHTML = errorThrown + ':  ' + textStatus.responseText;
+            document.getElementById('queryResults').innerHTML = null;
+            document.getElementById('sqlResult').innerHTML = null;
+            document.getElementById('databaseExists').innerHTML = null;
+            document.getElementById('tableExists').innerHTML = null;
+            document.getElementById('numOfTablesIsSame').innerHTML = null;
+            document.getElementById('numOfColumnsIsSame').innerHTML = null;
+            document.getElementById('numOfRowsIsSame').innerHTML = null;
+            document.getElementById('tableDataIsSame').innerHTML = null;
+        },
+        dataType: 'json'
+    });
+}; // be sure to assign a function here to handle form submission.
 let queryTemplates = ['query template 1', 'query template 2']; // set to [] to render
 let schemas = ['schema1', 'schema2']; // set to [] to render
 let tables = ['table1']; // set to [] to render
@@ -442,10 +475,6 @@ function addCriteria(parentNode) {
     reindentCriteria();
 }
 
-function removeCriteria() {
-
-}
-
 function renderHTML(beforeNode) {
     var form = document.createElement('form');
     form.setAttribute('id', 'queryBuilder');
@@ -461,13 +490,19 @@ function renderHTML(beforeNode) {
     }
 
     el = renderQueryTemplatesHTML();
-    if (el !== undefined)
+    if (el !== undefined) {
         form.appendChild(el);
+        let brEl = createNewElement('br');
+        form.appendChild(brEl);
+    }
 
     //Schemas
     el = renderSchemaHTML();
-    if (el !== undefined)
+    if (el !== undefined) {
         form.appendChild(el);
+        let brEl = createNewElement('br');
+        form.appendChild(brEl);
+    }
 
     //Tables
     el = renderTablesHTML();
@@ -522,6 +557,11 @@ function renderHTML(beforeNode) {
     el = renderOffsetHTML();
     if (el !== undefined)
         form.appendChild(el);
+
+    el = renderQueryButtonHTML();
+    if (el !== undefined) {
+        form.appendChild(el);
+    }
 
     if (beforeNode === undefined) {
         document.body.appendChild(form);
@@ -808,6 +848,21 @@ function renderOffsetHTML() {
         'class': 'form-control'
     };
     return createNewElement('select', attributesMap, offsetChoices);
+}
+
+function renderQueryButtonHTML() {
+    let attributesMap = {
+        'id': 'runQuery',
+        'name': 'runQuery',
+        'type': 'button'
+    };
+    let runQueryButton = createNewElement('button', attributesMap, null);
+    runQueryButton.innerHTML = 'Run Query';
+    runQueryButton.onclick = function () {
+        formSubmissionFunction();
+    }
+
+    return runQueryButton;
 }
 
 function syncSelectOptionsWithDataModel(HtmlId, dataProperty) {
