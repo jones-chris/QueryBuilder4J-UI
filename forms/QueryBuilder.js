@@ -193,12 +193,257 @@ function moveGroupByColumnDown(index) {
     syncSelectOptionsWithDataModel('groupBy', groupByColumns);
 }
 
-function addCriteria() {
-    //TODO:  add this method body.
+// id:  The criteria row that is being added or was removed
+// addOrRemove:  A string (either 'add' or 'remove')
+function renumberCriteria(id, addOrRemove) {
+    let criteria = document.getElementsByClassName('criteria-row');
+
+    for (var i=0; i<criteria.length; i++) {
+        
+        // get new id
+        let currentId = parseInt(criteria[i].id.slice(-1));
+        let newId = currentId;
+        if (currentId >= id && addOrRemove === 'add') {
+            newId = currentId + 1;
+        } else if (currentId > id && addOrRemove === 'remove') {
+            newId = currentId - 1;
+        }
+
+        // get new parent id
+        let currentParentId = criteria[i].children[1].value;;
+        let newParentId = (currentParentId === null) ? '' : currentParentId;
+        if (currentId >= id && addOrRemove === 'add') {
+            if (currentParentId !== "") {
+                newParentId = parseInt(currentParentId) + 1;
+            }
+        } else if (currentId > id && addOrRemove === 'remove') {
+            if (currentParentId !== "") {
+                if (parseInt(currentParentId) === 0 && parseInt(id) !== 0) {
+                    newParentId = currentParentId;
+                }
+                if (parseInt(currentParentId) === 0 && parseInt(id) === 0) {
+                    newParentId = null;
+                }
+                if (parseInt(currentParentId) > 0) {
+                    newParentId = parseInt(currentParentId) - 1;
+                }
+            }
+        }
+
+        // if greater, subtract by one
+        criteria[i].id = 'row.' + newId;
+
+        //id
+        criteria[i].children[0].id = 'criteria' + newId + '.id'; //id
+        criteria[i].children[0].name = 'criteria[' + newId + '].id'; //name
+        criteria[i].children[0].value = newId; //value
+
+        //parentId
+        criteria[i].children[1].id = 'criteria' + newId + '.parentId'; //id
+        criteria[i].children[1].name = 'criteria[' + newId + '].parentId'; //name
+        if (addOrRemove === 'add') {
+            if (currentParentId >= id) {
+                criteria[i].children[1].value = newParentId; //value
+            }
+        } else {
+            criteria[i].children[1].value = newParentId; //value
+        }
+        
+
+        //conjunction
+        criteria[i].children[2].id = 'criteria' + newId + '.conjunction'; //id
+        criteria[i].children[2].name = 'criteria[' + newId + '].conjunction'; //name
+
+        //front parenthesis
+        criteria[i].children[3].id = 'criteria' + newId + '.frontParenthesis'; //id
+        criteria[i].children[3].name = 'criteria[' + newId + '].frontParenthesis'; //name
+
+        //column
+        criteria[i].children[4].id = 'criteria' + newId + '.column'; //id
+        criteria[i].children[4].name = 'criteria[' + newId + '].column'; //name
+
+        //operator
+        criteria[i].children[5].id = 'criteria' + newId + '.operator'; //id
+        criteria[i].children[5].name = 'criteria[' + newId + '].operator'; //name
+
+        //filter
+        criteria[i].children[6].id = 'criteria' + newId + '.filter'; //id
+        criteria[i].children[6].name = 'criteria[' + newId + '].filter'; //name
+
+        //end parenthesis
+        criteria[i].children[7].id = 'criteria' + newId + '.endParenthesis'; //id
+        criteria[i].children[7].name = 'criteria[' + newId + '].endParenthesis'; //name
+    }
+    
+}
+
+function reindentCriteria() {
+    let criteria = document.getElementsByClassName('criteria-row');
+
+    for (var i=0; i<criteria.length; i++) {
+        //remove indenting
+        criteria[i].style.paddingLeft = "0px";
+
+        //get parentId
+        let parentId = criteria[i].children[1].value;
+        if (parentId !== "") {
+            //find parentId row's padding left indent
+            let parentRowIndent = document.getElementById('row.' + parseInt(parentId)).style.paddingLeft;
+            if (parentRowIndent === "") {
+                parentRowIndent = "0px";
+            }
+            //set this rows padding left indent + 20px
+            let newPaddingLeft = parseInt(parentRowIndent) + 100;
+            criteria[i].style.paddingLeft = newPaddingLeft + 'px';
+        }
+    }
+}
+
+// parentNode:  The criteria node to insert this child node after
+function addCriteria(parentNode) {
+    // These default assignments for parentId and id assume we are adding a new root criteria.
+    let parentId = '';
+    let id = 0;
+
+    // If the parentNode parameter is not null, then that means we are adding a child criteria and will reassign the
+    //   parentId and id variables.
+    if (parentNode !== null) {
+        parentId = parentNode.id.slice(-1);
+        id = parseInt(parentId) + 1;
+    }
+
+    renumberCriteria(id, 'add');
+
+    //inserts new row after row where 'Add Criteria' button was clicked.
+    let newDiv = createNewElement('div', {'id': 'row.' + id, 'class': 'criteria-row'}, null);
+
+    // create id input element
+    let idInput = createNewElement('input', {
+        'type': 'hidden',
+        'id': 'criteria' + id + '.id',
+        'name': 'criteria[' + id + '].id',
+        'value': id
+
+    }, null);
+    newDiv.appendChild(idInput);
+
+    // create parentId input element
+    let parentInputId = createNewElement('input', {
+        'type': 'hidden',
+        'id': 'criteria' + id + '.parentId',
+        'name': 'criteria[' + id + '].parentId',
+        'value': parentId
+    }, null);
+    newDiv.appendChild(parentInputId);
+
+    // create conjunction select element
+    let optionAnd = createNewElement('option', {'value': 'And'}, null);
+    optionAnd.innerHTML = 'And';
+    let optionOr = createNewElement('option', {'value': 'Or'}, null);
+    optionOr.innerHTML = 'Or';
+    let conjunctionEl = createNewElement('select', {'id': `criteria${id}.conjunction`, 'name': `criteria[${id}].conjunction`, 'class': 'criteria-select-and-input'}, null);
+    conjunctionEl.appendChild(optionAnd);
+    conjunctionEl.appendChild(optionOr);
+    newDiv.appendChild(conjunctionEl);
+
+    // create front parenthesis input element
+    let frontParenInput = createNewElement('input', {
+        'type': 'hidden',
+        'id': 'criteria' + id + '.frontParenthesis',
+        'name': 'criteria[' + id + '].frontParenthesis'
+    }, null);
+    newDiv.appendChild(frontParenInput);
+
+    // create column select element
+    let columnEl = createNewElement('select', {
+        'id': `criteria${id}.column`, 
+        'name': `criteria[${id}].column`, 
+        'class': 'criteria-select-and-input'
+    }, availableColumns);
+    newDiv.appendChild(columnEl);
+
+    // create operator select element
+    let optionEqual =               createNewElement('option', {'value': 'equalTo'}, null, '=');
+    let optionNotEqualTo =          createNewElement('option', {'value': 'notEqualTo'}, null, '<>');
+    let optionGreaterThanOrEquals = createNewElement('option', {'value': 'greaterThanOrEquals'}, null, '>=');
+    let optionLessThanOrequals =    createNewElement('option', {'value': 'lessThanOrEquals'}, null, '<=');
+    let optionGreaterThan =         createNewElement('option', {'value': 'greaterThan'}, null, '>');
+    let optionLessThan =            createNewElement('option', {'value': 'lessThan'}, null, '<');
+    let optionLike =                createNewElement('option', {'value': 'like'}, null, 'like');
+    let optionNotLike =             createNewElement('option', {'value': 'notLike'}, null, 'not like');
+    let optionIn =                  createNewElement('option', {'value': 'in'}, null, 'in');
+    let optionNotIn =               createNewElement('option', {'value': 'notIn'}, null, 'not in');
+    let optionIsNull =              createNewElement('option', {'value': 'isNull'}, null, 'is null');
+    let optionIsNotNull =           createNewElement('option', {'value': 'isNotNull'}, null, 'is not null');
+    
+    let operatorEl =                createNewElement('select', {'id': `criteria${id}.operator`, 'name': `criteria[${id}].operator`, 'class': 'criteria-select-and-input'}, null);
+    operatorEl.appendChild(optionEqual);
+    operatorEl.appendChild(optionNotEqualTo);
+    operatorEl.appendChild(optionGreaterThanOrEquals);
+    operatorEl.appendChild(optionLessThanOrequals);
+    operatorEl.appendChild(optionGreaterThan);
+    operatorEl.appendChild(optionLessThan);
+    operatorEl.appendChild(optionLike);
+    operatorEl.appendChild(optionNotLike);
+    operatorEl.appendChild(optionIn);
+    operatorEl.appendChild(optionNotIn);
+    operatorEl.appendChild(optionIsNull);
+    operatorEl.appendChild(optionIsNotNull);
+    
+    newDiv.appendChild(operatorEl);
+
+    // create filter input element
+    let filterInput = createNewElement('input', {
+        'id': 'criteria' + id + '.filter',
+        'name': 'criteria[' + id + '].filter',
+        'class': 'criteria-select-and-input'
+    }, null);
+    newDiv.appendChild(filterInput);
+
+    // create end parenthesis input element
+    let endParenInput = createNewElement('input', {
+        'type': 'hidden',
+        'id': 'criteria' + id + '.endParenthesis',
+        'name': 'criteria[' + id + '].endParenthesis'
+    }, null);
+    newDiv.appendChild(endParenInput);
+
+    // create 'Add Criteria' button
+    let addCriteriaButton = createNewElement('input', {
+        'type': 'button',
+        'value': 'Add Criteria',
+        'class': 'criteria-select-and-input'
+    }, null);
+    addCriteriaButton.onclick = function () {
+        addCriteria(newDiv);
+    }
+    newDiv.appendChild(addCriteriaButton);
+
+    // create 'Remove Criteria' button
+    let removeCriteriaButton = createNewElement('input', {
+        'type': 'button',
+        'value': 'Remove Criteria',
+        'class': 'criteria-select-and-input'
+    }, null);
+    removeCriteriaButton.onclick = function () {
+        newDiv.remove();
+        renumberCriteria(newDiv.id.slice(-1), 'remove');
+        reindentCriteria();
+    }
+    newDiv.appendChild(removeCriteriaButton);
+
+    // insert newDiv into the DOM
+    if (parentNode === null) {
+        document.getElementById('criteriaAnchor').prepend(newDiv);
+    } else {
+        parentNode.insertAdjacentElement('afterend', newDiv);
+    }
+
+    reindentCriteria();
 }
 
 function removeCriteria() {
-    //TODO:  add this method body.
+
 }
 
 function renderHTML(beforeNode) {
@@ -327,7 +572,7 @@ function moveArrayPropertyItem(arrayPropertyName, index, direction) {
     }
 }
 
-function createNewElement(type, attributesMap, dataProperty) {
+function createNewElement(type, attributesMap, dataProperty, innerHtml=null) {
     if (this[dataProperty] === null) return null;
 
     let select = document.createElement(type);
@@ -345,6 +590,10 @@ function createNewElement(type, attributesMap, dataProperty) {
             
             select.add(option);
         }
+    }
+
+    if (innerHtml !== null) {
+        select.innerHTML = innerHtml;
     }
         
     return select;        
@@ -479,11 +728,28 @@ function renderAvailableColumnsHTML() {
 }
 
 function renderCriteriaHTML() {
+    let pEl = createNewElement('p', {}, null);
+    pEl.innerHTML = 'Criteria';
+
+    let addRootCriteriaButton = createNewElement('button', {'type': 'button'}, null);
+    addRootCriteriaButton.innerHTML = 'Add Root Criteria';
+    addRootCriteriaButton.onclick = function () {
+        addCriteria(null);
+    };
+
+    let pCriteriaAnchorEl = createNewElement('p', {'id': 'criteriaAnchor'}, null);
+
     let attributesMap = {
         'id': 'criteria',
-        'name': 'criteria'
+        'name': 'criteria',
+        'class': 'criteria-div'
     };
-    return  createNewElement('div', attributesMap, null);
+    let div = createNewElement('div', attributesMap, null);
+    div.appendChild(pEl);
+    div.appendChild(addRootCriteriaButton);
+    div.appendChild(pCriteriaAnchorEl);
+
+    return div;
 }
 
 function renderDistinctHTML() {
