@@ -496,6 +496,11 @@ function renderHTML(beforeNode) {
         form.appendChild(brEl);
     }
 
+    //Other Options
+    el = renderOtherOptionsHTML();
+    if (el !== undefined) 
+        form.appendChild(el);
+
     //Schemas
     el = renderSchemaHTML();
     if (el !== undefined) {
@@ -509,6 +514,7 @@ function renderHTML(beforeNode) {
     if (el !== undefined)
         form.appendChild(el);
 
+    //Joins
     el = renderJoinsHTML();
     if (el !== undefined)
         form.appendChild(el);
@@ -518,44 +524,9 @@ function renderHTML(beforeNode) {
     if (el !== undefined) 
         form.appendChild(el);
 
-    //SelectedColumns
-    // el = renderSelectedColumnsHTML();
-    // if (el !== undefined)
-    //     form.appendChild(el);
-
     //Criteria
     el = renderCriteriaHTML();
     if (el !== undefined) 
-        form.appendChild(el);
-
-    //Distinct
-    el = renderDistinctHTML();
-    if (el !== undefined)
-        form.appendChild(el);
-
-    //Order By
-    el = renderOrderByHTML();
-    if (el !== undefined)
-        form.appendChild(el);
-
-    //Group By
-    el = renderGroupByHTML();
-    if (el !== undefined)
-        form.appendChild(el);
-
-    //Suppress Nulls
-    el = renderSuppressNullsHTML();
-    if (el !== undefined)
-        form.appendChild(el);
-
-    //Limit
-    el = renderLimitHTML();
-    if (el !== undefined)
-        form.appendChild(el);
-
-    //Offset
-    el = renderOffsetHTML();
-    if (el !== undefined)
         form.appendChild(el);
 
     el = renderQueryButtonHTML();
@@ -734,6 +705,7 @@ function renderJoinsHTML() {
 
 function renderAvailableColumnsHTML() {
     if (availableColumns !== null) {
+        // Create Available Columns Div, Label, and Select elements
         let attributesMapAvailableColumns = {
             'id': 'availableColumns',
             'name': 'availableColumns',
@@ -746,6 +718,30 @@ function renderAvailableColumnsHTML() {
         let labelAvailableColumns = createNewElement('label', {'for': 'availableColumns'});
         labelAvailableColumns.innerHTML = 'Table Columns';
 
+        let availableColumnsDiv = createNewElement('div', {'id': 'availableColumnsDiv', 'class': 'available-columns-div'});
+        availableColumnsDiv.appendChild(labelAvailableColumns);
+        availableColumnsDiv.appendChild(selectAvailableColumns);
+
+        // Create Add and Remove Columns Div and Button elements
+        let addColumnButton = createNewElement('button', {'id': 'addColumnsButton', 'name': 'addColumnsButton', 'class': 'available-columns-add-button'}, null);
+        addColumnButton.innerHTML = 'Add';
+        addColumnButton.onclick = function() {
+            let selectedColumns = getSelectedOptions('availableColumns');
+            addSelectedColumns(selectedColumns);
+        };
+
+        let removeColumnButton = createNewElement('button', {'id': 'removeColumnsButton', 'name': 'removeColumnsButton'}, null);
+        removeColumnButton.innerHTML = 'Remove';
+        removeColumnButton.onclick = function() {
+            let selectedColumns = getSelectedOptions('selectedColumns', 'indeces');
+            removeSelectedColumn(selectedColumns);
+        };
+
+        let addRemoveButtonsDiv = createNewElement('div', {'id': 'addRemoveColumns', 'class': 'available-columns-buttons-div'});
+        addRemoveButtonsDiv.appendChild(addColumnButton);
+        addRemoveButtonsDiv.appendChild(removeColumnButton);
+
+        // Create Selected Columns Div, Label, and Select elements.
         let attributesMapSelectedColumns = {
             'id': 'selectedColumns',
             'name': 'selectedColumns',
@@ -757,13 +753,16 @@ function renderAvailableColumnsHTML() {
         let labelSelectedColumns = createNewElement('label', {'for': 'selectedColumns'});
         labelSelectedColumns.innerHTML = 'Selected Columns';
 
-        let div = createNewElement('div', {'id': 'availableColumnsDiv', 'class': 'available-columns-div'});
-        div.appendChild(labelAvailableColumns);
-        div.appendChild(selectAvailableColumns);
-        div.appendChild(labelSelectedColumns);
-        div.appendChild(selectSelectedColumns);
+        let selectedColumnsDiv = createNewElement('div', {'id': 'selectedColumnsDiv', 'class': 'selected-columns-div'});
+        selectedColumnsDiv.appendChild(labelSelectedColumns);
+        selectedColumnsDiv.appendChild(selectSelectedColumns);
 
-        return div;
+        let parentDiv = createNewElement('div', {'width': '600px', 'height': '191px'}, null);
+        parentDiv.appendChild(availableColumnsDiv);
+        parentDiv.insertAdjacentElement('beforeend', addRemoveButtonsDiv);
+        parentDiv.insertAdjacentElement('beforeend', selectedColumnsDiv);
+
+        return parentDiv;
     }
 }
 
@@ -792,63 +791,131 @@ function renderCriteriaHTML() {
     return div;
 }
 
-function renderDistinctHTML() {
-    let attributesMap = {
-        'id': 'distinct',
-        'name': 'distinct',
-        'type': 'checkbox', 
-        'value': 'Distinct / Unique',
-        'class': 'custom-control-input'
-    };
-    return  createNewElement('input', attributesMap, null);
+function renderOtherOptionsHTML() {
+    let distinctEl = null;
+    let orderByEl = null;
+    let groupByEl = null;
+    let suppressNullsEl = null;
+    let limitEl = null;
+    let offsetEl = null;
+    let parentDiv = createNewElement('div', {'class': 'other-options-div'}, null);
+
+    if (distinct) {
+        let attributesMap = {
+            'id': 'distinct',
+            'name': 'distinct',
+            'type': 'checkbox', 
+            'value': 'Distinct / Unique',
+            'class': 'custom-control-input'
+        };
+        distinctEl = createNewElement('input', attributesMap, null);
+        parentDiv.appendChild(distinctEl);
+    }
+
+    if (orderByColumns !== null) {
+        let attributesMap = {
+            'id': 'orderBy',
+            'name': 'orderBy',
+            'class': 'form-control'
+        };
+        orderByEl = createNewElement('select', attributesMap,  orderByColumns);
+        parentDiv.appendChild(orderByEl);
+    }
+
+    if (groupByColumns !== null) {
+        let attributesMap = {
+            'id': 'groupBy',
+            'name': 'groupBy',
+            'class': 'form-control'
+        };
+        groupByEl = createNewElement('select', attributesMap,  groupByColumns);
+        parentDiv.appendChild(groupByEl);
+    }
+
+    if (suppressNulls) {
+        let attributesMap = {
+            'id': 'suppressNulls',
+            'name': 'suppressNulls',
+            'type': 'checkbox',
+            'value': 'Suppress Nulls',
+            'class': 'custom-control-input'
+        };
+        suppressNullsEl = createNewElement('input', attributesMap, null);
+        parentDiv.appendChild(suppressNullsEl);
+    }
+    
+    if (limitChoices !== null) {
+        let attributesMap = {
+            'id': 'limit',
+            'name': 'limit',
+            'class': 'form-control'
+        };
+        limitEl = createNewElement('select', attributesMap, limitChoices);
+        parentDiv.appendChild(limitEl);
+    }
+
+    if (offsetChoices !== null) {
+        let attributesMap = {
+            'id': 'offset',
+            'name': 'offset',
+            'class': 'form-control'
+        };
+        offsetEl = createNewElement('select', attributesMap, offsetChoices);
+        parentDiv.appendChild(offsetEl);
+    }
+
+    return parentDiv;
 }
 
-function renderOrderByHTML() {
-    let attributesMap = {
-        'id': 'orderBy',
-        'name': 'orderBy',
-        'class': 'form-control'
-    };
-    return  createNewElement('select', attributesMap,  orderByColumns);
-}
+// function renderDistinctHTML() {
+// }
 
-function renderGroupByHTML() {
-    let attributesMap = {
-        'id': 'groupBy',
-        'name': 'groupBy',
-        'class': 'form-control'
-    };
-    return  createNewElement('select', attributesMap,  groupByColumns);
-}
+// function renderOrderByHTML() {
+//     let attributesMap = {
+//         'id': 'orderBy',
+//         'name': 'orderBy',
+//         'class': 'form-control'
+//     };
+//     return  createNewElement('select', attributesMap,  orderByColumns);
+// }
 
-function renderSuppressNullsHTML() {
-    let attributesMap = {
-        'id': 'suppressNulls',
-        'name': 'suppressNulls',
-        'type': 'checkbox',
-        'value': 'Suppress Nulls',
-        'class': 'custom-control-input'
-    };
-    return createNewElement('input', attributesMap, null);
-}
+// function renderGroupByHTML() {
+//     let attributesMap = {
+//         'id': 'groupBy',
+//         'name': 'groupBy',
+//         'class': 'form-control'
+//     };
+//     return  createNewElement('select', attributesMap,  groupByColumns);
+// }
 
-function renderLimitHTML() {
-    let attributesMap = {
-        'id': 'limit',
-        'name': 'limit',
-        'class': 'form-control'
-    };
-    return createNewElement('select', attributesMap, limitChoices);
-}
+// function renderSuppressNullsHTML() {
+//     let attributesMap = {
+//         'id': 'suppressNulls',
+//         'name': 'suppressNulls',
+//         'type': 'checkbox',
+//         'value': 'Suppress Nulls',
+//         'class': 'custom-control-input'
+//     };
+//     return createNewElement('input', attributesMap, null);
+// }
 
-function renderOffsetHTML() {
-    let attributesMap = {
-        'id': 'offset',
-        'name': 'offset',
-        'class': 'form-control'
-    };
-    return createNewElement('select', attributesMap, offsetChoices);
-}
+// function renderLimitHTML() {
+//     let attributesMap = {
+//         'id': 'limit',
+//         'name': 'limit',
+//         'class': 'form-control'
+//     };
+//     return createNewElement('select', attributesMap, limitChoices);
+// }
+
+// function renderOffsetHTML() {
+//     let attributesMap = {
+//         'id': 'offset',
+//         'name': 'offset',
+//         'class': 'form-control'
+//     };
+//     return createNewElement('select', attributesMap, offsetChoices);
+// }
 
 function renderQueryButtonHTML() {
     let attributesMap = {
@@ -895,12 +962,12 @@ function clearOptions(HtmlId) {
     }
 }
 
-function getSelectedOptions(HtmlId) {
+function getSelectedOptions(HtmlId, textOrIndeces='text') {
     let results = [];
     let select = document.getElementById(HtmlId);
     for (var i=0; i<select.options.length; i++) {
         if (select.options[i].selected) {
-            results.push(select.options[i].text);
+            (textOrIndeces === 'text') ? results.push(select.options[i].text) : results.push(i);
         }
     }
     return results;

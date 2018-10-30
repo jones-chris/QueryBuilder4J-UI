@@ -88,12 +88,15 @@ nav {
 }
 
 .query-templates-div {
+    float: left;
+    width: 150px;
     display: inline-grid;
     padding-top: 10px;
 }
 
 .schemas-div {
-    display: inline-grid;
+    clear: both;
+    display: block;
     padding-top: 10px;
 }
 
@@ -103,5 +106,33 @@ nav {
 }
 
 .available-columns-div {
-    display: inline-flex;
+    float: left;
+    width: 150px;
+}
+
+.selected-columns-div {
+    float: left;
+    width: 150px;
+}
+
+.available-columns-buttons-div {
+    float: left;
+    width: 150px;
+}
+
+.available-columns-add-button {
+    display: block;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+.other-options-div {
+    /* display: inline; */
+    float: left;
+    margin-left: 200px;
+    padding-top: 10px;
+}
+
+label {
+    display: block;
 }
