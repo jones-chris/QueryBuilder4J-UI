@@ -496,8 +496,8 @@ function renderHTML(beforeNode) {
         form.appendChild(brEl);
     }
 
-    //Other Options
-    el = renderOtherOptionsHTML();
+    //Available Columns
+    el = renderAvailableColumnsHTML();
     if (el !== undefined) 
         form.appendChild(el);
 
@@ -519,13 +519,13 @@ function renderHTML(beforeNode) {
     if (el !== undefined)
         form.appendChild(el);
 
-    //Available Columns
-    el = renderAvailableColumnsHTML();
+    //Criteria
+    el = renderCriteriaHTML();
     if (el !== undefined) 
         form.appendChild(el);
 
-    //Criteria
-    el = renderCriteriaHTML();
+    //Other Options
+    el = renderOtherOptionsHTML();
     if (el !== undefined) 
         form.appendChild(el);
 
@@ -630,7 +630,6 @@ function renderQueryTemplatesHTML() {
         div.appendChild(label);
         div.appendChild(select);
         
-        
         return div;
     }
 }
@@ -730,7 +729,7 @@ function renderAvailableColumnsHTML() {
             addSelectedColumns(selectedColumns);
         };
 
-        let removeColumnButton = createNewElement('button', {'id': 'removeColumnsButton', 'name': 'removeColumnsButton'}, null);
+        let removeColumnButton = createNewElement('button', {'id': 'removeColumnsButton', 'name': 'removeColumnsButton', 'class': 'available-columns-remove-button'}, null);
         removeColumnButton.innerHTML = 'Remove';
         removeColumnButton.onclick = function() {
             let selectedColumns = getSelectedOptions('selectedColumns', 'indeces');
@@ -739,6 +738,7 @@ function renderAvailableColumnsHTML() {
 
         let addRemoveButtonsDiv = createNewElement('div', {'id': 'addRemoveColumns', 'class': 'available-columns-buttons-div'});
         addRemoveButtonsDiv.appendChild(addColumnButton);
+        addRemoveButtonsDiv.appendChild(createNewElement('br'));
         addRemoveButtonsDiv.appendChild(removeColumnButton);
 
         // Create Selected Columns Div, Label, and Select elements.
@@ -757,7 +757,7 @@ function renderAvailableColumnsHTML() {
         selectedColumnsDiv.appendChild(labelSelectedColumns);
         selectedColumnsDiv.appendChild(selectSelectedColumns);
 
-        let parentDiv = createNewElement('div', {'width': '600px', 'height': '191px'}, null);
+        let parentDiv = createNewElement('div', {'id': 'tableColumns', 'name': 'tableColumns', 'class': 'table-columns', 'width': '600px', 'height': '191px'}, null);
         parentDiv.appendChild(availableColumnsDiv);
         parentDiv.insertAdjacentElement('beforeend', addRemoveButtonsDiv);
         parentDiv.insertAdjacentElement('beforeend', selectedColumnsDiv);
@@ -979,10 +979,10 @@ function getSelectedOptions(HtmlId, textOrIndeces='text') {
 
 renderHTML();
 
-if (getQueryTemplateEndpoint !== null) {
-    getQueryTemplates();
-}
+// if (getQueryTemplateEndpoint !== null) {
+//     getQueryTemplates();
+// }
 
-if (getSchemaEndpoint !== null) {
-    getSchemas();
-}
+// if (getSchemaEndpoint !== null) {
+//     getSchemas();
+// }
