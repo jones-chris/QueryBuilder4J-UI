@@ -156,6 +156,7 @@ nav {
 
 .schemas-div {
     display: inline-grid;
+    padding-top: 10px;
     /* clear: both;
     display: block;
     padding-top: 10px; */
@@ -163,6 +164,7 @@ nav {
 
 .tables-div {
     display: inline-grid;
+    padding-top: 10px;
     /* display: inline-grid;
     padding-top: 10px; */
 }
@@ -201,4 +203,44 @@ nav {
 
 .available-columns-remove-button {
     width: 65px;
+}
+
+.criteria-div {
+    width: 1500px;
+    border-style: ridge;
+    box-sizing: border-box;
+    display: inline-grid;
+    margin-top: 40px;
+}
+
+.add-root-criteria-button {
+    width: 150px;
+    margin-left: 30px;
+}
+
+.other-options-div {
+    float: right;
+    width: calc(100% - 1500px);
+    padding-top: 40px;
+}
+
+#otherOptionsDiv select {
+    width: 60px;
+}
+
+#otherOptionsDiv > * {
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+
+.run-query-button {
+    margin-top: 30px;
+}
+
+.run-query-div {
+    text-align: center;
+}
+
+#criteriaPEl {
+    margin-left: 30px;
 }

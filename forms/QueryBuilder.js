@@ -45,13 +45,12 @@ let allowJoins = true; // set to true to render
 let availableColumns = ['column1', 'column2']; // set to [] to render
 let selectedColumns = ['column1']; // set to [] to render
 let criteria = []; // set to [] to render
-let distinct = false;
+let distinct = true;  // set to true to render
 let orderByColumns = null; // set to [] to render
 let groupByColumns = null; // set to [] to render
 let suppressNulls = false; //set to true to render
 let limitChoices = [5, 10, 50, 500]; // set to [] to render
 let offsetChoices = [5, 10, 50, 500]; // set to [] to render
-let cssFile = null;
 let queryTemplatesSize = 5;
 let schemasSize = 5;
 let tablesSize = 5;
@@ -767,10 +766,10 @@ function renderAvailableColumnsHTML() {
 }
 
 function renderCriteriaHTML() {
-    let pEl = createNewElement('p', {}, null);
+    let pEl = createNewElement('p', {'id': 'criteriaPEl', 'name': 'criteriaPEl'}, null);
     pEl.innerHTML = 'Criteria';
 
-    let addRootCriteriaButton = createNewElement('button', {'type': 'button'}, null);
+    let addRootCriteriaButton = createNewElement('button', {'id': 'addRootCriteriaButton', 'name': 'addRootCriteriaButton', 'type': 'button', 'class': 'add-root-criteria-button'}, null);
     addRootCriteriaButton.innerHTML = 'Add Root Criteria';
     addRootCriteriaButton.onclick = function () {
         addCriteria(null);
@@ -798,7 +797,7 @@ function renderOtherOptionsHTML() {
     let suppressNullsEl = null;
     let limitEl = null;
     let offsetEl = null;
-    let parentDiv = createNewElement('div', {'class': 'other-options-div'}, null);
+    let parentDiv = createNewElement('div', {'id': 'otherOptionsDiv', 'name': 'otherOptioinsDiv', 'class': 'other-options-div'}, null);
 
     if (distinct) {
         let attributesMap = {
@@ -809,7 +808,11 @@ function renderOtherOptionsHTML() {
             'class': 'custom-control-input'
         };
         distinctEl = createNewElement('input', attributesMap, null);
+        labelDistinct = createNewElement('label', {'for': 'distinct'}, null);
+        labelDistinct.innerHTML = 'Distinct';
+        parentDiv.appendChild(labelDistinct);
         parentDiv.appendChild(distinctEl);
+        parentDiv.appendChild(createNewElement('br', {}, null));
     }
 
     if (orderByColumns !== null) {
@@ -819,7 +822,11 @@ function renderOtherOptionsHTML() {
             'class': 'form-control'
         };
         orderByEl = createNewElement('select', attributesMap,  orderByColumns);
+        labelOrderBy = createNewElement('label', {'for': 'orderBy'}, null);
+        labelOrderBy.innerHTML = 'Order By';
+        parentDiv.appendChild(labelOrderBy);
         parentDiv.appendChild(orderByEl);
+        parentDiv.appendChild(createNewElement('br', {}, null));
     }
 
     if (groupByColumns !== null) {
@@ -829,7 +836,11 @@ function renderOtherOptionsHTML() {
             'class': 'form-control'
         };
         groupByEl = createNewElement('select', attributesMap,  groupByColumns);
+        labelGroupBy = createNewElement('label', {'for': 'groupBy'}, null);
+        labelGroupBy.innerHTML = 'Group By';
+        parentDiv.appendChild(labelGroupBy);
         parentDiv.appendChild(groupByEl);
+        parentDiv.appendChild(createNewElement('br', {}, null));
     }
 
     if (suppressNulls) {
@@ -841,7 +852,11 @@ function renderOtherOptionsHTML() {
             'class': 'custom-control-input'
         };
         suppressNullsEl = createNewElement('input', attributesMap, null);
+        labelSuppressNulls = createNewElement('label', {'for': 'suppressNulls'}, null);
+        labelSuppressNulls.innerHTML = 'Suppress Null Records';
+        parentDiv.appendChild(labelSuppressNulls);
         parentDiv.appendChild(suppressNullsEl);
+        parentDiv.appendChild(createNewElement('br', {}, null));
     }
     
     if (limitChoices !== null) {
@@ -851,7 +866,11 @@ function renderOtherOptionsHTML() {
             'class': 'form-control'
         };
         limitEl = createNewElement('select', attributesMap, limitChoices);
+        labelLimit = createNewElement('label', {'for': 'limit'}, null);
+        labelLimit.innerHTML = 'Limit  ';
+        parentDiv.appendChild(labelLimit);
         parentDiv.appendChild(limitEl);
+        parentDiv.appendChild(createNewElement('br', {}, null));
     }
 
     if (offsetChoices !== null) {
@@ -861,7 +880,11 @@ function renderOtherOptionsHTML() {
             'class': 'form-control'
         };
         offsetEl = createNewElement('select', attributesMap, offsetChoices);
+        labelOffset = createNewElement('label', {'for': 'offset'}, null);
+        labelOffset.innerHTML = 'Offset  ';
+        parentDiv.appendChild(labelOffset);
         parentDiv.appendChild(offsetEl);
+        parentDiv.appendChild(createNewElement('br', {}, null));
     }
 
     return parentDiv;
@@ -921,7 +944,8 @@ function renderQueryButtonHTML() {
     let attributesMap = {
         'id': 'runQuery',
         'name': 'runQuery',
-        'type': 'button'
+        'type': 'button',
+        'class': 'run-query-button'
     };
     let runQueryButton = createNewElement('button', attributesMap, null);
     runQueryButton.innerHTML = 'Run Query';
@@ -929,7 +953,10 @@ function renderQueryButtonHTML() {
         formSubmissionFunction();
     }
 
-    return runQueryButton;
+    let div = createNewElement('div', {'id': 'runQueryDiv', 'name': 'runQueryDiv', 'class': 'run-query-div'}, null);
+    div.appendChild(runQueryButton);
+
+    return div;
 }
 
 function syncSelectOptionsWithDataModel(HtmlId, dataProperty) {
