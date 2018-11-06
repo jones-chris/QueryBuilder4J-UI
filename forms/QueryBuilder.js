@@ -373,7 +373,7 @@ function addCriteria(parentNode) {
     optionAnd.innerHTML = 'And';
     let optionOr = createNewElement('option', {'value': 'Or'}, null);
     optionOr.innerHTML = 'Or';
-    let conjunctionEl = createNewElement('select', {'id': `criteria${id}.conjunction`, 'name': `criteria[${id}].conjunction`, 'class': 'criteria-select-and-input'}, null);
+    let conjunctionEl = createNewElement('select', {'id': `criteria${id}.conjunction`, 'name': `criteria[${id}].conjunction`, 'class': 'criteria-conjuction-and-operator'}, null);
     conjunctionEl.appendChild(optionAnd);
     conjunctionEl.appendChild(optionOr);
     newDiv.appendChild(conjunctionEl);
@@ -390,7 +390,7 @@ function addCriteria(parentNode) {
     let columnEl = createNewElement('select', {
         'id': `criteria${id}.column`, 
         'name': `criteria[${id}].column`, 
-        'class': 'criteria-select-and-input'
+        'class': 'criteria-column-and-filter'
     }, availableColumns);
     newDiv.appendChild(columnEl);
 
@@ -408,7 +408,7 @@ function addCriteria(parentNode) {
     let optionIsNull =              createNewElement('option', {'value': 'isNull'}, null, 'is null');
     let optionIsNotNull =           createNewElement('option', {'value': 'isNotNull'}, null, 'is not null');
     
-    let operatorEl =                createNewElement('select', {'id': `criteria${id}.operator`, 'name': `criteria[${id}].operator`, 'class': 'criteria-select-and-input'}, null);
+    let operatorEl =                createNewElement('select', {'id': `criteria${id}.operator`, 'name': `criteria[${id}].operator`, 'class': 'criteria-conjuction-and-operator'}, null);
     operatorEl.appendChild(optionEqual);
     operatorEl.appendChild(optionNotEqualTo);
     operatorEl.appendChild(optionGreaterThanOrEquals);
@@ -428,7 +428,7 @@ function addCriteria(parentNode) {
     let filterInput = createNewElement('input', {
         'id': 'criteria' + id + '.filter',
         'name': 'criteria[' + id + '].filter',
-        'class': 'criteria-select-and-input'
+        'class': 'criteria-column-and-filter'
     }, null);
     newDiv.appendChild(filterInput);
 
@@ -444,7 +444,7 @@ function addCriteria(parentNode) {
     let addCriteriaButton = createNewElement('input', {
         'type': 'button',
         'value': 'Add Criteria',
-        'class': 'criteria-select-and-input'
+        'class': 'criteria-add-remove-buttons'
     }, null);
     addCriteriaButton.onclick = function () {
         addCriteria(newDiv);
@@ -455,7 +455,7 @@ function addCriteria(parentNode) {
     let removeCriteriaButton = createNewElement('input', {
         'type': 'button',
         'value': 'Remove Criteria',
-        'class': 'criteria-select-and-input'
+        'class': 'criteria-add-remove-buttons'
     }, null);
     removeCriteriaButton.onclick = function () {
         newDiv.remove();

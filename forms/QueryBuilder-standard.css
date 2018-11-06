@@ -141,14 +141,29 @@ nav {
     width: fit-content;
 } */
 
-#queryBuilder select { 
+/* #queryBuilder select { 
     width: 200px; 
-    /* TODO:  on focus set width to fit-content. */
-}
-    
-/* #queryBuilder select:focus {
-    width: fit-content; 
 } */
+
+#queryTemplates {
+    width: 200px; 
+}
+
+#availableColumns {
+    width: 200px;
+}
+
+#selectedColumns {
+    width: 200px;
+}
+
+#schemas {
+    width: 200px;
+}
+
+#tables {
+    width: 200px;
+}
 
 .query-templates-div {
     display: inline-grid;
@@ -157,28 +172,19 @@ nav {
 .schemas-div {
     display: inline-grid;
     padding-top: 10px;
-    /* clear: both;
-    display: block;
-    padding-top: 10px; */
 }
 
 .tables-div {
     display: inline-grid;
     padding-top: 10px;
-    /* display: inline-grid;
-    padding-top: 10px; */
 }
 
 .available-columns-div {
     display: inline-grid;
-    /* float: left;
-    width: 150px; */
 }
 
 .selected-columns-div {
     display: inline-grid;
-    /* float: left;
-    width: 150px; */
 }
 
 .table-columns {
@@ -187,16 +193,12 @@ nav {
 }
 
 .available-columns-buttons-div {
-    /* float: left;
-    width: 150px; */
     padding-top: 70px;
     padding-left: 20px;
     padding-right: 20px;
 }
 
 .available-columns-add-button {
-    /* display: block;
-    margin-top: 50px; */
     width: 65px;
     margin-bottom: 20px;
 }
@@ -243,4 +245,28 @@ nav {
 
 #criteriaPEl {
     margin-left: 30px;
+}
+
+.criteria-column-and-filter {
+    width: 140px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.criteria-conjuction-and-operator {
+    width: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.criteria-add-remove-buttons {
+    width: auto;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
