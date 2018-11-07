@@ -1,11 +1,12 @@
-let columnMembersWindow = null;
-let getQueryTemplateEndpoint = "http://localhost:8080/queryTemplates";
-let getSchemaEndpoint = "http://localhost:8080/schemas";
-let getTablesEndpoint = "http://localhost:8080/tablesAndViews/";
-let getColumnsEndpoint = "http://localhost:8080/columns/";
-let formSubmissionEndpoint = "http://localhost:8080/query";
-let formMethod = "POST";
-let formSubmissionFunction = function () {
+const scriptVariables = {
+    columnMembersWindow : null,
+    getQueryTemplateEndpoint : "http://localhost:8080/queryTemplates",
+    getSchemaEndpoint : "http://localhost:8080/schemas",
+    getTablesEndpoint : "http://localhost:8080/tablesAndViews/",
+    getColumnsEndpoint : "http://localhost:8080/columns/",
+    formSubmissionEndpoint : "http://localhost:8080/query",
+    formMethod : "POST",
+    formSubmissionFunction : function () {
     $.ajax({
         type: 'POST',
         url: $('#qb').attr('action'),
@@ -37,27 +38,28 @@ let formSubmissionFunction = function () {
         },
         dataType: 'json'
     });
-}; // be sure to assign a function here to handle form submission.
-let queryTemplates = ['query template 1', 'query template 2']; // set to [] to render
-let schemas = ['schema1', 'schema2']; // set to [] to render
-let tables = ['table1']; // set to [] to render
-let allowJoins = true; // set to true to render
-let availableColumns = ['column1', 'column2']; // set to [] to render
-let selectedColumns = ['column1']; // set to [] to render
-let criteria = []; // set to [] to render
-let distinct = true;  // set to true to render
-let orderByColumns = null; // set to [] to render
-let groupByColumns = null; // set to [] to render
-let suppressNulls = false; //set to true to render
-let limitChoices = [5, 10, 50, 500]; // set to [] to render
-let offsetChoices = [5, 10, 50, 500]; // set to [] to render
-let queryTemplatesSize = 5;
-let schemasSize = 5;
-let tablesSize = 5;
-let availableColumnsSize = 10;
-let selectedColumnsSize = 10;
-let orderByColumnsSize = 10;
-let groupByColumnsSize = 10;
+}, // be sure to assign a function here to handle form submission.
+    queryTemplates : ['query template 1', 'query template 2'], // set to [] to render
+    schemas : ['schema1', 'schema2'], // set to [] to render
+    tables : ['table1'], // set to [] to render
+    allowJoins : true, // set to true to render
+    availableColumns : ['column1', 'column2'], // set to [] to render
+    selectedColumns : ['column1'], // set to [] to render
+    criteria : [], // set to [] to render
+    distinct : true,  // set to true to render
+    orderByColumns : null, // set to [] to render
+    groupByColumns : null, // set to [] to render
+    suppressNulls : false, //set to true to render
+    limitChoices : [5, 10, 50, 500], // set to [] to render
+    offsetChoices : [5, 10, 50, 500], // set to [] to render
+    queryTemplatesSize : 5,
+    schemasSize : 5,
+    tablesSize : 5,
+    availableColumnsSize : 10,
+    selectedColumnsSize : 10,
+    orderByColumnsSize : 10,
+    groupByColumnsSize : 10
+}
 
 function sendAjaxRequest(endpoint, paramString, method, callbackFunction) {
     $.ajax({
@@ -79,7 +81,7 @@ function sendAjaxRequest(endpoint, paramString, method, callbackFunction) {
 }
 
 function setColumnMembersWindow() {
-    columnMembersWindow = new ColumnMembers();
+    scriptVariables['columnMembersWindow'] = new ColumnMembers();
 }
 
 function showColumnMembersWindow() {
@@ -88,17 +90,17 @@ function showColumnMembersWindow() {
 }
 
 function getQueryTemplates() {
-    sendAjaxRequest(getQueryTemplateEndpoint,
+    sendAjaxRequest(scriptVariables['getQueryTemplateEndpoint'],
                     null,
                     "GET",
                     function(queryTemplatesData) {
                         fillArrayProperty('queryTemplates', queryTemplatesData);
-                        syncSelectOptionsWithDataModel('queryTemplates', queryTemplates);
+                        syncSelectOptionsWithDataModel('queryTemplates', scrptVariables['queryTemplates']);
                     });
 }
 
 function getQueryTemplatById(id) {
-    sendAjaxRequest(getQueryTemplateEndpoint + '/' + id,
+    sendAjaxRequest(scriptVariables['getQueryTemplateEndpoint'] + '/' + id,
                     null,
                     "GET",
                     function(queryTemplateData) {
@@ -112,117 +114,117 @@ function getQueryTemplatById(id) {
 }
 
 function getSchemas() {
-    sendAjaxRequest(getSchemaEndpoint, 
+    sendAjaxRequest(scriptVariables['getSchemaEndpoint'], 
                     null, 
                     "GET",
                     function(schemasData) {
                         fillArrayProperty('schemas', schemasData);
-                        syncSelectOptionsWithDataModel('schemas', schemas);
+                        syncSelectOptionsWithDataModel('schemas', scriptVariables[schemas]);
                     });
 }
 
 function getTables(schema) {
-    sendAjaxRequest(getTablesEndpoint + schema, 
+    sendAjaxRequest(scriptVariables['getTablesEndpoint'] + schema, 
                     null, 
                     "GET", 
                     function (tablesData) {
                         fillArrayProperty('tables', tablesData);
-                        syncSelectOptionsWithDataModel('tables', tables);
+                        syncSelectOptionsWithDataModel('tables', scriptVariables['tables']);
                     });
 }
 
 function getAvailableColumns(schema, tablesArray) {
     let tableParamString = tablesArray.join('&');
-    sendAjaxRequest(getColumnsEndpoint + schema + tableParamString, 
+    sendAjaxRequest(scriptVariables['getColumnsEndpoint'] + schema + tableParamString, 
                     null, 
                     "GET",
                     function(columnsData) {
                         fillArrayProperty('columns', columnsData);
-                        syncSelectOptionsWithDataModel('columns', availableColumns);
+                        syncSelectOptionsWithDataModel('columns', scriptVariables['availableColumns']);
                     });
 }
 
 function addSelectedColumns(members) {
-    fillArrayProperty('selectedMembers', members);
-    syncSelectOptionsWithDataModel('selectedColumns', selectedColumns);
+    fillArrayProperty('selectedColumns', members);
+    syncSelectOptionsWithDataModel('selectedColumns', scriptVariables['selectedColumns']);
 }
 
 function removeSelectedColumn(memberIndeces) {
     deleteArrayPropertyMembers('selectedColumns', memberIndeces);
-    syncSelectOptionsWithDataModel('selectedColumns', selectedColumns);
+    syncSelectOptionsWithDataModel('selectedColumns', scriptVariables['selectedColumns']);
 }
 
 function moveSelectedColumnUp(index) {
     if (index === 0) return null;
 
     // get destination item
-    var itemToDelete = selectedColumns[index - 1];
+    var itemToDelete = scriptVariables['selectedColumns'][index - 1];
     
     // set destination item to current item
-    selectedColumns[index - 1] = selectedColumns[index];
+    scriptVariables['selectedColumns'][index - 1] = scriptVariables['selectedColumns'][index];
 
     // insert destination item at current item's index
-    selectedColumns[index] = itemToDelete;
+    scriptVariables['selectedColumns'][index] = itemToDelete;
 
-    syncSelectOptionsWithDataModel('selectedColumns', selectedColumns);
+    syncSelectOptionsWithDataModel('selectedColumns', scriptVariables['selectedColumns']);
     //updateSelectedMembersHTML();
 }
 
 function moveSelectedColumnDown(index) {
-    if (index === selectedColumns.length - 1) return null;
+    if (index === scriptVariables['selectedColumns'].length - 1) return null;
 
     // get destination item
-    var itemToDelete = selectedColumns[index + 1];
+    var itemToDelete = scriptVariables['selectedColumns'][index + 1];
 
     // set destination item to current item
-    selectedColumns[index + 1] = selectedColumns[index];
+    scriptVariables['selectedColumns'][index + 1] = scriptVariables['selectedColumns'][index];
 
     // insert destination item at current item's index
-    selectedColumns[index] = itemToDelete;
+    scriptVariables['selectedColumns'][index] = itemToDelete;
 
-    syncSelectOptionsWithDataModel('selectedColumns', selectedColumns);
+    syncSelectOptionsWithDataModel('selectedColumns', scriptVariables['selectedColumns']);
     //updateSelectedMembersHTML();
 }
 
 function addOrderByColumns(members) {
     fillArrayProperty('orderByColumns', members);
-    syncSelectOptionsWithDataModel('orderBy', orderByColumns);
+    syncSelectOptionsWithDataModel('orderBy', scriptVariables['orderByColumns']);
 }
 
 function removeOrderByColumns(memberIndeces) {
     deleteArrayPropertyMembers('orderByColumns', memberIndeces);
-    syncSelectOptionsWithDataModel('orderBy', orderByColumns);
+    syncSelectOptionsWithDataModel('orderBy', scriptVariables['orderByColumns']);
 }
 
 function moveOrderByColumnUp(index) {
     moveArrayPropertyItem('orderByColumns', index, 'up');
-    syncSelectOptionsWithDataModel('orderBy', orderByColumns);
+    syncSelectOptionsWithDataModel('orderBy', scriptVariables['orderByColumns']);
 } 
 
 function moveOrderByColumnDown(index) {
     moveArrayPropertyItem('orderByColumns', index, 'down');
-    syncSelectOptionsWithDataModel('orderBy', orderByColumns);
+    syncSelectOptionsWithDataModel('orderBy', scriptVariables['orderByColumns']);
 }
 
 function addGroupByColumns(members) {
     
     fillArrayProperty('groupByColumns', members);
-    syncSelectOptionsWithDataModel('groupBy', groupByColumns);
+    syncSelectOptionsWithDataModel('groupBy', scriptVariables['groupByColumns']);
 }
 
 function removeGroupByColumns(memberIndeces) {
     deleteArrayPropertyMembers('groupByColumns', memberIndeces);
-    syncSelectOptionsWithDataModel('groupBy', groupByColumns);
+    syncSelectOptionsWithDataModel('groupBy', scriptVariables['groupByColumns']);
 } 
 
 function moveGroupByColumnUp(index) {
     moveArrayPropertyItem('groupByColumns', index, 'up');
-    syncSelectOptionsWithDataModel('groupBy', groupByColumns);
+    syncSelectOptionsWithDataModel('groupBy', scriptVariables['groupByColumns']);
 }
 
 function moveGroupByColumnDown(index) {
     moveArrayPropertyItem('groupByColumns', index, 'down');
-    syncSelectOptionsWithDataModel('groupBy', groupByColumns);
+    syncSelectOptionsWithDataModel('groupBy', scriptVariables['groupByColumns']);
 }
 
 // id:  The criteria row that is being added or was removed
@@ -391,7 +393,7 @@ function addCriteria(parentNode) {
         'id': `criteria${id}.column`, 
         'name': `criteria[${id}].column`, 
         'class': 'criteria-column-and-filter'
-    }, availableColumns);
+    }, scriptVariables['availableColumns']);
     newDiv.appendChild(columnEl);
 
     // create operator select element
@@ -478,13 +480,13 @@ function renderHTML(beforeNode) {
     var form = document.createElement('form');
     form.setAttribute('id', 'queryBuilder');
     form.setAttribute('name', 'queryBuilder');
-    form.setAttribute('action', formSubmissionEndpoint);
-    form.setAttribute('method', formMethod);
+    form.setAttribute('action', scriptVariables['formSubmissionEndpoint']);
+    form.setAttribute('method', scriptVariables['formMethod']);
 
     var el = null;
 
     //Query Templates
-    if (getQueryTemplateEndpoint !== null) {
+    if (scriptVariables['getQueryTemplateEndpoint'] !== null) {
         getQueryTemplates();
     }
 
@@ -543,17 +545,18 @@ function renderHTML(beforeNode) {
 
 function fillArrayProperty(arrayPropertyName, data) {
     for (var i=0; i<data.length; i++) {
-        this[arrayPropertyName].push(data[i]);
+        scriptVariables[arrayPropertyName].push(data[i]);
     }
 }
 
 function deleteArrayPropertyMembers(arrayPropertyName, indecesToDelete) {
-    newArray = this[arrayPropertyName].slice();
+    newArray = scriptVariables[arrayPropertyName].slice();
     for (var i in indecesToDelete) {
-        delete newArray[i];
+        let indexToDelete = indecesToDelete[i];
+        newArray.splice(indexToDelete, 1);
     }
 
-    this[arrayPropertyName] = newArray;
+    scriptVariables[arrayPropertyName] = newArray;
 }
 
 function moveArrayPropertyItem(arrayPropertyName, index, direction) {
@@ -610,13 +613,13 @@ function createNewElement(type, attributesMap, dataProperty, innerHtml=null) {
 }
 
 function renderQueryTemplatesHTML() {
-    if (queryTemplates !== null) {
+    if (scriptVariables['queryTemplates'] !== null) {
         let attributesMap = {
             'id': 'queryTemplates', 
             'name': 'queryTemplates',
             'class': 'form-control'
         };
-        let select = createNewElement('select', attributesMap, queryTemplates);
+        let select = createNewElement('select', attributesMap, scriptVariables['queryTemplates']);
         select.onchange = function() {
             let queryTemplateId = document.getElementById('queryTemplates').value;
             getQueryTemplatById(queryTemplateId);
@@ -634,15 +637,15 @@ function renderQueryTemplatesHTML() {
 }
 
 function renderSchemaHTML() {
-    if (schemas !== null) {
+    if (scriptVariables['schemas'] !== null) {
         let attributesMap = {
             'id': 'schemas',
             'name': 'schemas',
             'class': 'form-control',
-            'size': schemasSize
+            'size': scriptVariables['schemasSize']
         };
 
-        let select = createNewElement('select', attributesMap, schemas);
+        let select = createNewElement('select', attributesMap, scriptVariables['schemas']);
         select.onchange = function () {
             let schema = document.getElementById('schemas').value;
             if (schema !== "") {
@@ -664,16 +667,16 @@ function renderSchemaHTML() {
 }
 
 function renderTablesHTML() {
-    if (tables !== null) {
+    if (scriptVariables['tables'] !== null) {
         let attributesMap = {
             'id': 'tables',
             'name': 'tables',
             'multiple': 'true',
             'class': 'form-control',
-            'size': tablesSize
+            'size': scriptVariables['tablesSize']
         };
         
-        let select = createNewElement('select', attributesMap, tables);
+        let select = createNewElement('select', attributesMap, scriptVariables['tables']);
         select.onchange = function() {
             let schema = document.getElementById('schemas').value;
             let tables = getSelectedOptions('tables');
@@ -696,23 +699,23 @@ function renderTablesHTML() {
 }
 
 function renderJoinsHTML() {
-    if (allowJoins) {
+    if (scriptVariables['allowJoins']) {
         return createNewElement('div', {'id': 'joinsDiv', 'class': 'joins-div', 'border-style': 'groove'});
     }
 }
 
 function renderAvailableColumnsHTML() {
-    if (availableColumns !== null) {
+    if (scriptVariables['availableColumns'] !== null) {
         // Create Available Columns Div, Label, and Select elements
         let attributesMapAvailableColumns = {
             'id': 'availableColumns',
             'name': 'availableColumns',
             'multiple': 'true',
             'class': 'form-control',
-            'size': availableColumnsSize
+            'size': scriptVariables['availableColumnsSize']
         };
         
-        let selectAvailableColumns = createNewElement('select', attributesMapAvailableColumns, availableColumns);
+        let selectAvailableColumns = createNewElement('select', attributesMapAvailableColumns, scriptVariables['availableColumns']);
         let labelAvailableColumns = createNewElement('label', {'for': 'availableColumns'});
         labelAvailableColumns.innerHTML = 'Table Columns';
 
@@ -721,14 +724,14 @@ function renderAvailableColumnsHTML() {
         availableColumnsDiv.appendChild(selectAvailableColumns);
 
         // Create Add and Remove Columns Div and Button elements
-        let addColumnButton = createNewElement('button', {'id': 'addColumnsButton', 'name': 'addColumnsButton', 'class': 'available-columns-add-button'}, null);
+        let addColumnButton = createNewElement('button', {'id': 'addColumnsButton', 'name': 'addColumnsButton', 'type': 'button', 'class': 'available-columns-add-button'}, null);
         addColumnButton.innerHTML = 'Add';
         addColumnButton.onclick = function() {
             let selectedColumns = getSelectedOptions('availableColumns');
             addSelectedColumns(selectedColumns);
         };
 
-        let removeColumnButton = createNewElement('button', {'id': 'removeColumnsButton', 'name': 'removeColumnsButton', 'class': 'available-columns-remove-button'}, null);
+        let removeColumnButton = createNewElement('button', {'id': 'removeColumnsButton', 'name': 'removeColumnsButton', 'type': 'button', 'class': 'available-columns-remove-button'}, null);
         removeColumnButton.innerHTML = 'Remove';
         removeColumnButton.onclick = function() {
             let selectedColumns = getSelectedOptions('selectedColumns', 'indeces');
@@ -745,10 +748,10 @@ function renderAvailableColumnsHTML() {
             'id': 'selectedColumns',
             'name': 'selectedColumns',
             'class': 'form-control',
-            'size': selectedColumnsSize
+            'size': scriptVariables['selectedColumnsSize']
         };
         
-        let selectSelectedColumns = createNewElement('select', attributesMapSelectedColumns, selectedColumns);
+        let selectSelectedColumns = createNewElement('select', attributesMapSelectedColumns, scriptVariables['selectedColumns']);
         let labelSelectedColumns = createNewElement('label', {'for': 'selectedColumns'});
         labelSelectedColumns.innerHTML = 'Selected Columns';
 
@@ -799,7 +802,7 @@ function renderOtherOptionsHTML() {
     let offsetEl = null;
     let parentDiv = createNewElement('div', {'id': 'otherOptionsDiv', 'name': 'otherOptioinsDiv', 'class': 'other-options-div'}, null);
 
-    if (distinct) {
+    if (scriptVariables['distinct']) {
         let attributesMap = {
             'id': 'distinct',
             'name': 'distinct',
@@ -815,13 +818,13 @@ function renderOtherOptionsHTML() {
         parentDiv.appendChild(createNewElement('br', {}, null));
     }
 
-    if (orderByColumns !== null) {
+    if (scriptVariables['orderByColumns'] !== null) {
         let attributesMap = {
             'id': 'orderBy',
             'name': 'orderBy',
             'class': 'form-control'
         };
-        orderByEl = createNewElement('select', attributesMap,  orderByColumns);
+        orderByEl = createNewElement('select', attributesMap,  scriptVariables['orderByColumns']);
         labelOrderBy = createNewElement('label', {'for': 'orderBy'}, null);
         labelOrderBy.innerHTML = 'Order By';
         parentDiv.appendChild(labelOrderBy);
@@ -829,13 +832,13 @@ function renderOtherOptionsHTML() {
         parentDiv.appendChild(createNewElement('br', {}, null));
     }
 
-    if (groupByColumns !== null) {
+    if (scriptVariables['groupByColumns'] !== null) {
         let attributesMap = {
             'id': 'groupBy',
             'name': 'groupBy',
             'class': 'form-control'
         };
-        groupByEl = createNewElement('select', attributesMap,  groupByColumns);
+        groupByEl = createNewElement('select', attributesMap,  scriptVariables['groupByColumns']);
         labelGroupBy = createNewElement('label', {'for': 'groupBy'}, null);
         labelGroupBy.innerHTML = 'Group By';
         parentDiv.appendChild(labelGroupBy);
@@ -843,7 +846,7 @@ function renderOtherOptionsHTML() {
         parentDiv.appendChild(createNewElement('br', {}, null));
     }
 
-    if (suppressNulls) {
+    if (scriptVariables['suppressNulls']) {
         let attributesMap = {
             'id': 'suppressNulls',
             'name': 'suppressNulls',
@@ -859,13 +862,13 @@ function renderOtherOptionsHTML() {
         parentDiv.appendChild(createNewElement('br', {}, null));
     }
     
-    if (limitChoices !== null) {
+    if (scriptVariables['limitChoices'] !== null) {
         let attributesMap = {
             'id': 'limit',
             'name': 'limit',
             'class': 'form-control'
         };
-        limitEl = createNewElement('select', attributesMap, limitChoices);
+        limitEl = createNewElement('select', attributesMap, scriptVariables['limitChoices']);
         labelLimit = createNewElement('label', {'for': 'limit'}, null);
         labelLimit.innerHTML = 'Limit  ';
         parentDiv.appendChild(labelLimit);
@@ -873,13 +876,13 @@ function renderOtherOptionsHTML() {
         parentDiv.appendChild(createNewElement('br', {}, null));
     }
 
-    if (offsetChoices !== null) {
+    if (scriptVariables['offsetChoices'] !== null) {
         let attributesMap = {
             'id': 'offset',
             'name': 'offset',
             'class': 'form-control'
         };
-        offsetEl = createNewElement('select', attributesMap, offsetChoices);
+        offsetEl = createNewElement('select', attributesMap, scriptVariables['offsetChoices']);
         labelOffset = createNewElement('label', {'for': 'offset'}, null);
         labelOffset.innerHTML = 'Offset  ';
         parentDiv.appendChild(labelOffset);
@@ -889,56 +892,6 @@ function renderOtherOptionsHTML() {
 
     return parentDiv;
 }
-
-// function renderDistinctHTML() {
-// }
-
-// function renderOrderByHTML() {
-//     let attributesMap = {
-//         'id': 'orderBy',
-//         'name': 'orderBy',
-//         'class': 'form-control'
-//     };
-//     return  createNewElement('select', attributesMap,  orderByColumns);
-// }
-
-// function renderGroupByHTML() {
-//     let attributesMap = {
-//         'id': 'groupBy',
-//         'name': 'groupBy',
-//         'class': 'form-control'
-//     };
-//     return  createNewElement('select', attributesMap,  groupByColumns);
-// }
-
-// function renderSuppressNullsHTML() {
-//     let attributesMap = {
-//         'id': 'suppressNulls',
-//         'name': 'suppressNulls',
-//         'type': 'checkbox',
-//         'value': 'Suppress Nulls',
-//         'class': 'custom-control-input'
-//     };
-//     return createNewElement('input', attributesMap, null);
-// }
-
-// function renderLimitHTML() {
-//     let attributesMap = {
-//         'id': 'limit',
-//         'name': 'limit',
-//         'class': 'form-control'
-//     };
-//     return createNewElement('select', attributesMap, limitChoices);
-// }
-
-// function renderOffsetHTML() {
-//     let attributesMap = {
-//         'id': 'offset',
-//         'name': 'offset',
-//         'class': 'form-control'
-//     };
-//     return createNewElement('select', attributesMap, offsetChoices);
-// }
 
 function renderQueryButtonHTML() {
     let attributesMap = {
@@ -950,7 +903,7 @@ function renderQueryButtonHTML() {
     let runQueryButton = createNewElement('button', attributesMap, null);
     runQueryButton.innerHTML = 'Run Query';
     runQueryButton.onclick = function () {
-        formSubmissionFunction();
+        scriptVariables['formSubmissionFunction']();
     }
 
     let div = createNewElement('div', {'id': 'runQueryDiv', 'name': 'runQueryDiv', 'class': 'run-query-div'}, null);
@@ -1006,10 +959,10 @@ function getSelectedOptions(HtmlId, textOrIndeces='text') {
 
 renderHTML();
 
-// if (getQueryTemplateEndpoint !== null) {
-//     getQueryTemplates();
-// }
+if (scriptVariables['getQueryTemplateEndpoint'] !== null) {
+    getQueryTemplates();
+}
 
-// if (getSchemaEndpoint !== null) {
-//     getSchemas();
-// }
+if (scriptVariables['getSchemaEndpoint'] !== null) {
+    getSchemas();
+}
