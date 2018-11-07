@@ -485,10 +485,11 @@ function renderHTML(beforeNode) {
 
     var el = null;
 
-    //Query Templates
-    if (scriptVariables['getQueryTemplateEndpoint'] !== null) {
-        getQueryTemplates();
-    }
+    //Query Templates 
+    // NOTE:  THIS IS NOW DONE AT THE BOTTOM OF THIS FILE WHERE THE SCRIPT STARTS
+    // if (scriptVariables['getQueryTemplateEndpoint'] !== null) {
+    //     getQueryTemplates();
+    // }
 
     el = renderQueryTemplatesHTML();
     if (el !== undefined) {
