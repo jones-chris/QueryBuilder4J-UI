@@ -826,7 +826,6 @@ function renderOtherOptionsHTML() {
             'id': 'suppressNulls',
             'name': 'suppressNulls',
             'type': 'checkbox',
-            'value': 'Suppress Nulls',
             'class': 'custom-control-input'
         };
         suppressNullsEl = createNewElement('input', attributesMap, null);
