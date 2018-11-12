@@ -1,55 +1,23 @@
 const scriptVariables = {
     columnMembersWindow : null,
-    getQueryTemplateEndpoint : "http://localhost:8080/queryTemplates",
-    getSchemaEndpoint : "http://localhost:8080/schemas",
-    getTablesEndpoint : "http://localhost:8080/tablesAndViews/",
-    getColumnsEndpoint : "http://localhost:8080/columns/",
-    formSubmissionEndpoint : "http://localhost:8080/query",
-    formMethod : "POST",
-    formSubmissionFunction : function () {
-    $.ajax({
-        type: 'POST',
-        url: $('#qb').attr('action'),
-        data: $('#qb').serialize(),
-        success: function(data) {
-            console.log(data);
-            document.getElementById('ajaxError').innerHTML = null;
-            document.getElementById('queryResults').innerHTML = data.queryResults[0];
-            document.getElementById('sqlResult').innerHTML = data.sqlResult[0];
-            document.getElementById('databaseExists').innerHTML = data.databaseExists;
-            document.getElementById('tableExists').innerHTML = data.tableExists;
-            document.getElementById('numOfTablesIsSame').innerHTML = data.tablesAreSame;
-            document.getElementById('numOfColumnsIsSame').innerHTML = data.numOfTableColumnsAreSame;
-            document.getElementById('numOfRowsIsSame').innerHTML = data.numOfTableRowsAreSame;
-            document.getElementById('tableDataIsSame').innerHTML = data.tableDataIsSame;
-        },
-        error: function(textStatus, errorThrown) {
-            console.log(textStatus);
-            console.log(errorThrown);
-            document.getElementById('ajaxError').innerHTML = errorThrown + ':  ' + textStatus.responseText;
-            document.getElementById('queryResults').innerHTML = null;
-            document.getElementById('sqlResult').innerHTML = null;
-            document.getElementById('databaseExists').innerHTML = null;
-            document.getElementById('tableExists').innerHTML = null;
-            document.getElementById('numOfTablesIsSame').innerHTML = null;
-            document.getElementById('numOfColumnsIsSame').innerHTML = null;
-            document.getElementById('numOfRowsIsSame').innerHTML = null;
-            document.getElementById('tableDataIsSame').innerHTML = null;
-        },
-        dataType: 'json'
-    });
-}, // be sure to assign a function here to handle form submission.
+    getQueryTemplateEndpoint : "http://www.querybuilder4j.net/queryTemplates", // set to your query template endpoint
+    getSchemaEndpoint : "http://www.querybuilder4j.net/schemas", // set to your schemas endpoint
+    getTablesEndpoint : "http://www.querybuilder4j.net/tablesAndViews/", // set to your tables endpoint
+    getColumnsEndpoint : "http://www.querybuilder4j.net/columns/", // set to your table columns endpoint
+    formSubmissionEndpoint : "http://www.querybuilder4j.net/query", // set to your query endpoint
+    formMethod : "POST", // set to the HTTP method that your query endpoint above accepts
+    formSubmissionFunction : function() {console.log('hello world');}, // assign a function here to handle form submission.
     queryTemplates : ['query template 1', 'query template 2'], // set to [] to render
-    schemas : ['schema1', 'schema2'], // set to [] to render
-    tables : ['table1'], // set to [] to render
+    schemas : ['null'], // set to [] to render
+    tables : ['county_spending_detail'], // set to [] to render
     allowJoins : true, // set to true to render
-    availableColumns : ['column1', 'column2'], // set to [] to render
-    selectedColumns : ['column1'], // set to [] to render
+    availableColumns : [], // set to [] to render
+    selectedColumns : [], // set to [] to render
     criteria : [], // set to [] to render
     distinct : true,  // set to true to render
     orderByColumns : null, // set to [] to render
     groupByColumns : null, // set to [] to render
-    suppressNulls : false, //set to true to render
+    suppressNulls : true, //set to true to render
     limitChoices : [5, 10, 50, 500], // set to [] to render
     offsetChoices : [5, 10, 50, 500], // set to [] to render
     queryTemplatesSize : 5,
@@ -67,11 +35,9 @@ function sendAjaxRequest(endpoint, paramString, method, callbackFunction) {
         url: endpoint,
         data: paramString,
         success: function(responseText) {
-            alert(responseText);
             callbackFunction(responseText);
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            alert('There was an error retrieving the database schemas');
             alert(jqXHR);
             alert(textStatus);
             alert(errorThrown);
@@ -95,7 +61,7 @@ function getQueryTemplates() {
                     "GET",
                     function(queryTemplatesData) {
                         fillArrayProperty('queryTemplates', queryTemplatesData);
-                        syncSelectOptionsWithDataModel('queryTemplates', scrptVariables['queryTemplates']);
+                        syncSelectOptionsWithDataModel('queryTemplates', scriptVariables['queryTemplates']);
                     });
 }
 
@@ -114,44 +80,44 @@ function getQueryTemplatById(id) {
 }
 
 function getSchemas() {
-    sendAjaxRequest(scriptVariables['getSchemaEndpoint'], 
-                    null, 
+    sendAjaxRequest(scriptVariables['getSchemaEndpoint'],
+                    null,
                     "GET",
                     function(schemasData) {
                         fillArrayProperty('schemas', schemasData);
-                        syncSelectOptionsWithDataModel('schemas', scriptVariables[schemas]);
+                        syncSelectOptionsWithDataModel('schemas', scriptVariables['schemas']);
                     });
 }
 
 function getTables(schema) {
-    sendAjaxRequest(scriptVariables['getTablesEndpoint'] + schema, 
-                    null, 
-                    "GET", 
+    sendAjaxRequest(scriptVariables['getTablesEndpoint'] + schema,
+                    null,
+                    "GET",
                     function (tablesData) {
                         fillArrayProperty('tables', tablesData);
-                        syncSelectOptionsWithDataModel('tables', scriptVariables['tables']);
+                        syncSelectOptionsWithDataModel('table', scriptVariables['tables']);
                     });
 }
 
 function getAvailableColumns(schema, tablesArray) {
     let tableParamString = tablesArray.join('&');
-    sendAjaxRequest(scriptVariables['getColumnsEndpoint'] + schema + tableParamString, 
-                    null, 
+    sendAjaxRequest(scriptVariables['getColumnsEndpoint'] + schema + "/" + tableParamString,
+                    null,
                     "GET",
                     function(columnsData) {
-                        fillArrayProperty('columns', columnsData);
-                        syncSelectOptionsWithDataModel('columns', scriptVariables['availableColumns']);
+                        fillArrayProperty('availableColumns', columnsData);
+                        syncSelectOptionsWithDataModel('availableColumns', scriptVariables['availableColumns']);
                     });
 }
 
 function addSelectedColumns(members) {
-    fillArrayProperty('selectedColumns', members);
-    syncSelectOptionsWithDataModel('selectedColumns', scriptVariables['selectedColumns']);
+    fillArrayProperty('selectedColumns', members, false);
+    syncSelectOptionsWithDataModel('columns', scriptVariables['selectedColumns']);
 }
 
 function removeSelectedColumn(memberIndeces) {
     deleteArrayPropertyMembers('selectedColumns', memberIndeces);
-    syncSelectOptionsWithDataModel('selectedColumns', scriptVariables['selectedColumns']);
+    syncSelectOptionsWithDataModel('columns', scriptVariables['selectedColumns']);
 }
 
 function moveSelectedColumnUp(index) {
@@ -159,7 +125,7 @@ function moveSelectedColumnUp(index) {
 
     // get destination item
     var itemToDelete = scriptVariables['selectedColumns'][index - 1];
-    
+
     // set destination item to current item
     scriptVariables['selectedColumns'][index - 1] = scriptVariables['selectedColumns'][index];
 
@@ -199,7 +165,7 @@ function removeOrderByColumns(memberIndeces) {
 function moveOrderByColumnUp(index) {
     moveArrayPropertyItem('orderByColumns', index, 'up');
     syncSelectOptionsWithDataModel('orderBy', scriptVariables['orderByColumns']);
-} 
+}
 
 function moveOrderByColumnDown(index) {
     moveArrayPropertyItem('orderByColumns', index, 'down');
@@ -207,7 +173,7 @@ function moveOrderByColumnDown(index) {
 }
 
 function addGroupByColumns(members) {
-    
+
     fillArrayProperty('groupByColumns', members);
     syncSelectOptionsWithDataModel('groupBy', scriptVariables['groupByColumns']);
 }
@@ -215,7 +181,7 @@ function addGroupByColumns(members) {
 function removeGroupByColumns(memberIndeces) {
     deleteArrayPropertyMembers('groupByColumns', memberIndeces);
     syncSelectOptionsWithDataModel('groupBy', scriptVariables['groupByColumns']);
-} 
+}
 
 function moveGroupByColumnUp(index) {
     moveArrayPropertyItem('groupByColumns', index, 'up');
@@ -233,7 +199,7 @@ function renumberCriteria(id, addOrRemove) {
     let criteria = document.getElementsByClassName('criteria-row');
 
     for (var i=0; i<criteria.length; i++) {
-        
+
         // get new id
         let currentId = parseInt(criteria[i].id.slice(-1));
         let newId = currentId;
@@ -282,7 +248,7 @@ function renumberCriteria(id, addOrRemove) {
         } else {
             criteria[i].children[1].value = newParentId; //value
         }
-        
+
 
         //conjunction
         criteria[i].children[2].id = 'criteria' + newId + '.conjunction'; //id
@@ -308,7 +274,7 @@ function renumberCriteria(id, addOrRemove) {
         criteria[i].children[7].id = 'criteria' + newId + '.endParenthesis'; //id
         criteria[i].children[7].name = 'criteria[' + newId + '].endParenthesis'; //name
     }
-    
+
 }
 
 function reindentCriteria() {
@@ -390,8 +356,8 @@ function addCriteria(parentNode) {
 
     // create column select element
     let columnEl = createNewElement('select', {
-        'id': `criteria${id}.column`, 
-        'name': `criteria[${id}].column`, 
+        'id': `criteria${id}.column`,
+        'name': `criteria[${id}].column`,
         'class': 'criteria-column-and-filter'
     }, scriptVariables['availableColumns']);
     newDiv.appendChild(columnEl);
@@ -409,7 +375,7 @@ function addCriteria(parentNode) {
     let optionNotIn =               createNewElement('option', {'value': 'notIn'}, null, 'not in');
     let optionIsNull =              createNewElement('option', {'value': 'isNull'}, null, 'is null');
     let optionIsNotNull =           createNewElement('option', {'value': 'isNotNull'}, null, 'is not null');
-    
+
     let operatorEl =                createNewElement('select', {'id': `criteria${id}.operator`, 'name': `criteria[${id}].operator`, 'class': 'criteria-conjuction-and-operator'}, null);
     operatorEl.appendChild(optionEqual);
     operatorEl.appendChild(optionNotEqualTo);
@@ -423,7 +389,7 @@ function addCriteria(parentNode) {
     operatorEl.appendChild(optionNotIn);
     operatorEl.appendChild(optionIsNull);
     operatorEl.appendChild(optionIsNotNull);
-    
+
     newDiv.appendChild(operatorEl);
 
     // create filter input element
@@ -485,7 +451,7 @@ function renderHTML(beforeNode) {
 
     var el = null;
 
-    //Query Templates 
+    //Query Templates
     // NOTE:  THIS IS NOW DONE AT THE BOTTOM OF THIS FILE WHERE THE SCRIPT STARTS
     // if (scriptVariables['getQueryTemplateEndpoint'] !== null) {
     //     getQueryTemplates();
@@ -500,7 +466,7 @@ function renderHTML(beforeNode) {
 
     //Available Columns
     el = renderAvailableColumnsHTML();
-    if (el !== undefined) 
+    if (el !== undefined)
         form.appendChild(el);
 
     //Schemas
@@ -523,12 +489,12 @@ function renderHTML(beforeNode) {
 
     //Criteria
     el = renderCriteriaHTML();
-    if (el !== undefined) 
+    if (el !== undefined)
         form.appendChild(el);
 
     //Other Options
     el = renderOtherOptionsHTML();
-    if (el !== undefined) 
+    if (el !== undefined)
         form.appendChild(el);
 
     el = renderQueryButtonHTML();
@@ -541,20 +507,29 @@ function renderHTML(beforeNode) {
     } else {
         document.getElementById(beforeNode).appendChild(form);
     }
-    
+
 }
 
-function fillArrayProperty(arrayPropertyName, data) {
+// This method assumes you are feeding it a JSON object with key-value pairs.
+function fillArrayProperty(arrayPropertyName, data, clearPropertyArray=true) {
+    if (clearPropertyArray) {
+        scriptVariables[arrayPropertyName] = [];
+    }
+
     for (var i=0; i<data.length; i++) {
-        scriptVariables[arrayPropertyName].push(data[i]);
+        for (var key in data[i]) {
+            scriptVariables[arrayPropertyName].push(data[i][key]);
+        }
     }
 }
 
 function deleteArrayPropertyMembers(arrayPropertyName, indecesToDelete) {
     newArray = scriptVariables[arrayPropertyName].slice();
     for (var i in indecesToDelete) {
-        let indexToDelete = indecesToDelete[i];
-        newArray.splice(indexToDelete, 1);
+        for (var key in indecesToDelete[i]) {
+            let indexToDelete = indecesToDelete[i][key];
+            newArray.splice(indexToDelete, 1);
+        }
     }
 
     scriptVariables[arrayPropertyName] = newArray;
@@ -566,7 +541,7 @@ function moveArrayPropertyItem(arrayPropertyName, index, direction) {
 
         // get destination item
         var itemToDelete = this[arrayPropertyName][index - 1];
-        
+
         // set destination item to current item
         this[arrayPropertyName][index - 1] = this[arrayPropertyName][index];
 
@@ -601,7 +576,7 @@ function createNewElement(type, attributesMap, dataProperty, innerHtml=null) {
             let option = document.createElement('option');
             option.value = dataProperty[item];
             option.innerHTML = dataProperty[item];
-            
+
             select.add(option);
         }
     }
@@ -609,14 +584,14 @@ function createNewElement(type, attributesMap, dataProperty, innerHtml=null) {
     if (innerHtml !== null) {
         select.innerHTML = innerHtml;
     }
-        
-    return select;        
+
+    return select;
 }
 
 function renderQueryTemplatesHTML() {
     if (scriptVariables['queryTemplates'] !== null) {
         let attributesMap = {
-            'id': 'queryTemplates', 
+            'id': 'queryTemplates',
             'name': 'queryTemplates',
             'class': 'form-control'
         };
@@ -632,7 +607,7 @@ function renderQueryTemplatesHTML() {
         let div = createNewElement('div', {'id': 'queryTemplatesDiv', 'class': 'query-templates-div'});
         div.appendChild(label);
         div.appendChild(select);
-        
+
         return div;
     }
 }
@@ -655,7 +630,7 @@ function renderSchemaHTML() {
                 alert('Please select a schema before retrieving tables');
             }
         };
-        
+
         let label = createNewElement('label', {'for': 'schemas'});
         label.innerHTML = 'Database Schemas';
 
@@ -670,25 +645,25 @@ function renderSchemaHTML() {
 function renderTablesHTML() {
     if (scriptVariables['tables'] !== null) {
         let attributesMap = {
-            'id': 'tables',
-            'name': 'tables',
+            'id': 'table', //TODO change this back to 'tables' once qb4j can handle multiple tables.
+            'name': 'table',
             'multiple': 'true',
             'class': 'form-control',
             'size': scriptVariables['tablesSize']
         };
-        
+
         let select = createNewElement('select', attributesMap, scriptVariables['tables']);
         select.onchange = function() {
             let schema = document.getElementById('schemas').value;
-            let tables = getSelectedOptions('tables');
-            if (schema !== "" || tables !== "") {
+            let tables = getSelectedOptionsAsArray('table');
+            if (schema !== "" && tables !== "") {
                 getAvailableColumns(schema, tables);
             } else {
                 alert('Please select a schema before retrieving tables');
             }
         };
 
-        let label = createNewElement('label', {'for': 'tables'});
+        let label = createNewElement('label', {'for': 'table'});
         label.innerHTML = 'Database Tables';
 
         let div = createNewElement('div', {'id': 'tablesDiv', 'class': 'tables-div'});
@@ -715,7 +690,7 @@ function renderAvailableColumnsHTML() {
             'class': 'form-control',
             'size': scriptVariables['availableColumnsSize']
         };
-        
+
         let selectAvailableColumns = createNewElement('select', attributesMapAvailableColumns, scriptVariables['availableColumns']);
         let labelAvailableColumns = createNewElement('label', {'for': 'availableColumns'});
         labelAvailableColumns.innerHTML = 'Table Columns';
@@ -728,14 +703,14 @@ function renderAvailableColumnsHTML() {
         let addColumnButton = createNewElement('button', {'id': 'addColumnsButton', 'name': 'addColumnsButton', 'type': 'button', 'class': 'available-columns-add-button'}, null);
         addColumnButton.innerHTML = 'Add';
         addColumnButton.onclick = function() {
-            let selectedColumns = getSelectedOptions('availableColumns');
+            let selectedColumns = getSelectedOptionsAsJSON('availableColumns');
             addSelectedColumns(selectedColumns);
         };
 
         let removeColumnButton = createNewElement('button', {'id': 'removeColumnsButton', 'name': 'removeColumnsButton', 'type': 'button', 'class': 'available-columns-remove-button'}, null);
         removeColumnButton.innerHTML = 'Remove';
         removeColumnButton.onclick = function() {
-            let selectedColumns = getSelectedOptions('selectedColumns', 'indeces');
+            let selectedColumns = getSelectedOptionsAsJSON('columns', 'indeces');
             removeSelectedColumn(selectedColumns);
         };
 
@@ -746,12 +721,12 @@ function renderAvailableColumnsHTML() {
 
         // Create Selected Columns Div, Label, and Select elements.
         let attributesMapSelectedColumns = {
-            'id': 'selectedColumns',
-            'name': 'selectedColumns',
+            'id': 'columns', // This is the selectedColumns select box, but the id has to be 'columns' so that Spring MVC binds the request parameter to the Java object automatically.
+            'name': 'columns',
             'class': 'form-control',
             'size': scriptVariables['selectedColumnsSize']
         };
-        
+
         let selectSelectedColumns = createNewElement('select', attributesMapSelectedColumns, scriptVariables['selectedColumns']);
         let labelSelectedColumns = createNewElement('label', {'for': 'selectedColumns'});
         labelSelectedColumns.innerHTML = 'Selected Columns';
@@ -807,8 +782,7 @@ function renderOtherOptionsHTML() {
         let attributesMap = {
             'id': 'distinct',
             'name': 'distinct',
-            'type': 'checkbox', 
-            'value': 'Distinct / Unique',
+            'type': 'checkbox',
             'class': 'custom-control-input'
         };
         distinctEl = createNewElement('input', attributesMap, null);
@@ -862,7 +836,7 @@ function renderOtherOptionsHTML() {
         parentDiv.appendChild(suppressNullsEl);
         parentDiv.appendChild(createNewElement('br', {}, null));
     }
-    
+
     if (scriptVariables['limitChoices'] !== null) {
         let attributesMap = {
             'id': 'limit',
@@ -931,10 +905,10 @@ function addOptionsToSelectElement(HtmlId, dataProperty) {
 
 function clearOptions(HtmlId) {
     let selectElement = document.getElementById(HtmlId);
-    
+
     // If the Select element exists, then remove all options.
     if (selectElement !== null) {
-        if (selectElement.options.length === 0) 
+        if (selectElement.options.length === 0)
         return;
 
         for (var i=selectElement.options.length-1; i>=0; i--) {
@@ -943,7 +917,31 @@ function clearOptions(HtmlId) {
     }
 }
 
-function getSelectedOptions(HtmlId, textOrIndeces='text') {
+//HtmlId : the id of the DOM select element
+//textOrIndeces : 'text' to add the option element values.  Anything else to add option indeces.
+//type : 'json' to return the selected options in JSON.  Anything else to return the selected options in an array.
+function getSelectedOptionsAsJSON(HtmlId, textOrIndeces='text') {
+    let results = [];
+    let select = document.getElementById(HtmlId);
+    for (var i=0; i<select.options.length; i++) {
+        if (select.options[i].selected) {
+            if (textOrIndeces === 'text') {
+                let obj = {};
+                obj['data'] = select.options[i].text;
+                results.push(obj);
+                //results['data'] = select.options[i].text;
+            } else {
+                let obj = {};
+                obj['data'] = i;
+                results.push(obj);
+                //results['data'] = i;
+            }
+        }
+    }
+    return results;
+}
+
+function getSelectedOptionsAsArray(HtmlId, textOrIndeces='text') {
     let results = [];
     let select = document.getElementById(HtmlId);
     for (var i=0; i<select.options.length; i++) {
@@ -952,6 +950,17 @@ function getSelectedOptions(HtmlId, textOrIndeces='text') {
         }
     }
     return results;
+}
+
+function buildRequestData() {
+    let requestData = $('#queryBuilder').serialize();
+
+    let selectedColumns = document.getElementById('columns').options;
+    for (var i=0; i<selectedColumns.length; i++) {
+        requestData += '&columns=' + selectedColumns[i].value;
+    }
+
+    return requestData;
 }
 
 //===========================================================================
