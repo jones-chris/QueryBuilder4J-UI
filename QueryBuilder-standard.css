@@ -1,3 +1,108 @@
+.criteria-select-and-input {
+    width: 140px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.table-columns {
+    margin: auto;
+}
+
+.select-tables {
+    width: auto;
+}
+
+.select-columns {
+    border-style: groove;
+    width: fit-content;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.criteria-row {
+    padding-bottom: 10px;
+    padding-left: 0px;
+}
+
+.tables-and-columns-div {
+    display: inline-flex;
+}
+
+#queryBuilder {
+    margin: auto;
+    width: 50%;
+}
+
+#queryTemplates {
+    text-align: center;
+    width: 200px; 
+}
+
+#availableColumnsDiv {
+    float: left;
+    display: grid;
+    width: 200px;
+}
+
+#addRemoveColumns {
+    float: left;
+    width: 50px;
+}
+
+#schemasDiv {
+    clear: both;
+    float: left;
+    display: grid;
+    width: 200px;
+}
+
+#tablesDiv {
+    float: left;
+    display: grid;
+    width: 200px;
+    margin-left: 50px;
+}
+
+#joinsDiv {
+    clear: both;
+}
+
+#joinsDiv * {
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
+#selectedColumnsDiv {
+    float: left;
+    width: 200px;
+    display: grid;
+}
+
+#availableColumns {
+    width: 200px;
+}
+
+#selectedColumns {
+    width: 200px;
+}
+
+#otherOptionsDiv {
+    text-align: center;
+}
+
+#otherOptionsDiv * {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#statementButtonsDiv * {
+    margin-right: 20px;
+}
+
 /* 
 
 .criteria-select-and-input {
@@ -81,11 +186,11 @@ nav {
 
   .selected-columns-div {
     text-align: left;
-} */
+} 
 
-.criteria-row {
+/*.criteria-row {
     padding-left: 0px;
-}
+}*/
 /* 
 .query-templates-div {
     float: left;
@@ -145,7 +250,20 @@ nav {
     width: 200px; 
 } */
 
-#queryTemplates {
+
+
+
+
+
+/*NEW*/
+
+
+
+
+
+
+
+/*#queryTemplates {
     width: 200px; 
 }
 
@@ -233,7 +351,7 @@ nav {
 #otherOptionsDiv > * {
     padding-left: 20px;
     margin-bottom: 20px;
-}
+}*/
 
 .run-query-button {
     margin-top: 30px;
@@ -269,4 +387,17 @@ nav {
     margin-right: 20px;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.statement-buttons-div {
+    text-align: center;
+}
+
+.join-row {
+    border-style: groove;
+    text-align: center;
+}
+
+.delete-join-button {
+    float: right;
 }
