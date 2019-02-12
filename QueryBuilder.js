@@ -835,7 +835,6 @@ function renderJoinsHTML() {
         });
         addJoinButton.innerHTML = 'Add Join';
         addJoinButton.onclick = function() {
-            // Determine the 
             let maxId = 0;
             $('#joinsDiv div').each(function() {
                 let idLength = $(this)[0].id.length;
@@ -880,8 +879,9 @@ function renderJoinsHTML() {
                 // Get all available columns that are from the selected table.
                 let tableColumns = getTableColumns(selectedOption);
 
-                // todo:  Add columns to parent table select elements
-                syncSelectOptionsWithDataModel(newJoinParentColumn.id, tableColumns);
+                // Add parent table columns to parent table select elements.
+                let parentJoinColumns = document.getElementsByName(newJoinParentColumn.name);
+                Array.from(parentJoinColumns).forEach(parentJoinColumn => syncSelectOptionsWithDataModel(parentJoinColumn, tableColumns));
             };
 
             let newJoinTargetTable = createNewElement('select', {
@@ -895,8 +895,9 @@ function renderJoinsHTML() {
                 // Get all available columns that are from the selected table.
                 let tableColumns = getTableColumns(selectedOption);
 
-                // todo:  Add columns to target table select elements
-                syncSelectOptionsWithDataModel(newJoinTargetColumn.id, tableColumns);
+                // Add target table columns to target table select elements.
+                let targetJoinColumns = document.getElementsByName(newJoinTargetColumn.name);
+                Array.from(targetJoinColumns).forEach(targetJoinColumn => syncSelectOptionsWithDataModel(targetJoinColumn, tableColumns));
             };
 
             let newJoinDeleteButton = createNewElement('button', {
@@ -934,40 +935,104 @@ function renderJoinsHTML() {
                         document.getElementById(`joins${id}.targetTable`).id = `joins${id - 1}.targetTable`;
 
                         // Renumber parentColumns
-                        document.getElementById(`joins${id}.parentJoinColumns`).name = `joins[${id - 1}].parentJoinColumns`;
-                        document.getElementById(`joins${id}.parentJoinColumns`).id = `joins${id - 1}.parentJoinColumns`;
+                        let parentJoinColumns = document.getElementsByName(`joins[${id}].parentJoinColumns`);
+                        Array.from(parentJoinColumns).forEach(parentJoinColumn => {
+                            parentJoinColumn.name = `joins[${id - 1}].parentJoinColumns`;
+                            parentJoinColumn.id = `joins${id - 1}.parentJoinColumns`;
+                        });
 
                         // Renumber targetColumns
-                        document.getElementById(`joins${id}.targetJoinColumns`).name = `joins[${id - 1}].targetJoinColumns`;
-                        document.getElementById(`joins${id}.targetJoinColumns`).id = `joins${id - 1}.targetJoinColumns`;
+                        let targetJoinColumns = document.getElementsByName(`joins[${id}].targetJoinColumns`);
+                        Array.from(targetJoinColumns).forEach(targetJoinColumn => {
+                            targetJoinColumn.name = `joins[${id - 1}].targetJoinColumns`;
+                            targetJoinColumn.id = `joins${id - 1}.targetJoinColumns`;
+                        });
 
                         // Renumber deleteButton
-                        document.getElementById(`joins${id}.deleteButton`).name = `joins[${id - 1}].deleteButton`;
-                        document.getElementById(`joins${id}.deleteButton`).id = `joins${id - 1}.deleteButton`;
+                        let deleteButtons = document.getElementsByName(`joins[${id}].deleteButton`);
+                        Array.from(deleteButtons).forEach(deleteButton => {
+                            deleteButton.name = `joins[${id - 1}].deleteButton`;
+                            deleteButton.id = `joins${id - 1}.deleteButton`;
+                        });
+
+                        // Renumber addParentAndTargetColumn
+                        let addParentAndTargetColumnButtons = document.getElementsByName(`joins[${id}].addParentAndTargetColumn`);
+                        Array.from(addParentAndTargetColumnButtons).forEach(addParentAndTargetColumn => {
+                            addParentAndTargetColumn.name = `joins[${id - 1}].addParentAndTargetColumn`;
+                            addParentAndTargetColumn.id = `joins${id - 1}.addParentAndTargetColumn`;
+                        });
+
+                        // Renumber deleteJoinColumnsButtons
+                        let deleteJoinColumnsButtons = document.getElementsByName(`joins[${id}].deleteJoinColumnsButton`);
+                        Array.from(deleteJoinColumnsButtons).forEach(deleteJoinColumnsButton => {
+                            deleteJoinColumnsButton.name = `joins[${id - 1}].deleteJoinColumnsButton`;
+                            deleteJoinColumnsButton.id = `joins${id - 1}.deleteJoinColumnsButton`;
+                        });
                     }
                 }
             };
             newJoinDeleteButton.innerHTML = 'X';
 
-            // todo:  Create two select elements with columns of 1) parent table and 2) target table
-            let parentTableColumns = scriptVariables['availableColumns'].filter(column => column.split('.')[1])
-            let parentTableColumnEl = createNewElement('select', {
-                'id': `joins${maxId}.targetTable`, 
-                'name': `joins[${maxId}].targetTable`
-            })
+            let newJoinAddParentAndTargetColumn = createNewElement('button', {
+                'id': `joins${maxId}.addParentAndTargetColumn`, 
+                'name': `joins[${maxId}].addParentAndTargetColumn`, 
+                'class': 'add-parent-and-target-column',
+                'type': 'button'
+            });
+            newJoinAddParentAndTargetColumn.innerHTML = '+';
+
+            // The onclick event should generate another parentAndTargetColumnPair with the data source identical to first parentAndTargetColumnPair.
+            newJoinAddParentAndTargetColumn.onclick = function() {
+                let parentTableColumns = Array.from(document.getElementById(`joins${maxId}.parentJoinColumns`).options).map(option => option.value);
+                let targetTableColumns = Array.from(document.getElementById(`joins${maxId}.targetJoinColumns`).options).map(option => option.value);
+
+                let anotherParentColumn = createNewElement('select', {
+                    'id': `joins${maxId}.parentJoinColumns`, 
+                    'name': `joins[${maxId}].parentJoinColumns`
+                }, parentTableColumns);
+
+                let anotherTargetColumn = createNewElement('select', {
+                    'id': `joins${maxId}.targetJoinColumns`, 
+                    'name': `joins[${maxId}].targetJoinColumns`
+                }, targetTableColumns);
+
+                let equalSign = createNewElement('b');
+                equalSign.innerHTML = ' = ';
+
+                let joinColumnsDeleteButton = createNewElement('button', {
+                    'id': `joins${maxId}.deleteJoinColumnsButton`, 
+                    'name': `joins[${maxId}].deleteJoinColumnsButton`, 
+                    'class': 'delete-join-columns-button',
+                    'type': 'button'
+                })
+                joinColumnsDeleteButton.innerHTML = 'X';
+                joinColumnsDeleteButton.onclick = function() {
+                    this.parentNode.remove();
+                };
+
+                let div = createNewElement('div');
+                div.appendChild(anotherParentColumn);
+                div.appendChild(equalSign);
+                div.appendChild(anotherTargetColumn);
+                div.appendChild(joinColumnsDeleteButton);
+                document.getElementById(`join-row${maxId}`).appendChild(div);
+            };
 
             newJoinDiv.appendChild(newJoinDeleteButton);
             newJoinDiv.appendChild(newJoinType);
             newJoinDiv.appendChild(newJoinParentTable);
             newJoinDiv.appendChild(newJoinImage);
             newJoinDiv.appendChild(newJoinTargetTable);
-            newJoinDiv.appendChild(createNewElement('br'));
-            newJoinDiv.appendChild(newJoinParentColumn);
+
+            let firstParentAndTargetColumnDiv = createNewElement('div');
+            firstParentAndTargetColumnDiv.appendChild(newJoinParentColumn);
             let equalSign = createNewElement('b');
             equalSign.innerHTML = ' = ';
-            newJoinDiv.appendChild(equalSign);
-            newJoinDiv.appendChild(newJoinTargetColumn);
-            
+            firstParentAndTargetColumnDiv.appendChild(equalSign);
+            firstParentAndTargetColumnDiv.appendChild(newJoinTargetColumn);
+            firstParentAndTargetColumnDiv.appendChild(newJoinAddParentAndTargetColumn);
+            newJoinDiv.appendChild(firstParentAndTargetColumnDiv);
+
             document.getElementById('joinsDiv').appendChild(newJoinDiv);
         };
 
@@ -1200,24 +1265,34 @@ function renderOtherOptionsHTML() {
 //     return div;
 // }
 
-function syncSelectOptionsWithDataModel(HtmlId, dataProperty) {
+function syncSelectOptionsWithDataModel(HtmlId, dataProperty, ) {
     clearOptions(HtmlId);
     addOptionsToSelectElement(HtmlId, dataProperty);
 }
 
 function addOptionsToSelectElement(HtmlId, dataProperty) {
     if (dataProperty !== null) {
+        let selectElement = (typeof(HtmlId) === 'object') ? HtmlId : document.getElementById(HtmlId);
         for (var i=0; i<dataProperty.length; i++) {
             var option = document.createElement("option");
             option.text = dataProperty[i];
             option.value = dataProperty[i];
-            document.getElementById(HtmlId).add(option);
+            if (typeof(HtmlId) === 'object') {
+                selectElement.add(option);
+            } else {
+                document.getElementById(HtmlId).add(option);
+            }
         }
     }
 }
 
 function clearOptions(HtmlId) {
-    let selectElement = document.getElementById(HtmlId);
+    let selectElement;
+    if (typeof(HtmlId) === 'object') {
+        selectElement = HtmlId;
+    } else {
+        selectElement = document.getElementById(HtmlId);
+    }
 
     // If the Select element exists, then remove all options.
     if (selectElement !== null) {
