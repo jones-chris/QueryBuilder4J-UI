@@ -1,13 +1,17 @@
 const scriptVariables = {
+    // Set contents of array to any of the following: 'queryTemplatesDiv', 'schemasDiv', 'tablesDiv', 'joinsDiv', 'columnsDiv', 
+    // 'criteriaDiv', or 'otherOptionsDiv' in order to show these divs when the page is rendered.
+    landingDivs : ['schemasDiv'],
     columnMembersWindow : null,
-    getQueryTemplateEndpoint : "http://www.querybuilder4j.net/queryTemplates", // set to your query template endpoint
+    phaseOutMilliseconds : 200,
+    getQueryTemplateEndpoint : null, // set to your query template endpoint
     getSchemaEndpoint : "http://www.querybuilder4j.net/schemas", // set to your schemas endpoint
     getTablesEndpoint : "http://www.querybuilder4j.net/tablesAndViews/", // set to your tables endpoint
     getColumnsEndpoint : "http://www.querybuilder4j.net/columns/", // set to your table columns endpoint
     formSubmissionEndpoint : "http://www.querybuilder4j.net/query", // set to your query endpoint
     formMethod : "POST", // set to the HTTP method that your query endpoint above accepts
     formSubmissionFunction : function() {console.log('hello world');}, // assign a function here to handle form submission.
-    queryTemplates : ['query template 1', 'query template 2'], // set to [] to render
+    queryTemplates : null, // set to [] to render
     schemas : ['null'], // set to [] to render
     tables : ['county_spending_detail', 'service_hierarchy', 'periods'], // set to [] to render
     allowJoins : true, // set to true to render
@@ -23,8 +27,8 @@ const scriptVariables = {
     queryTemplatesSize : 5,
     schemasSize : 5,
     tablesSize : 5,
-    availableColumnsSize : 10,
-    selectedColumnsSize : 10,
+    availableColumnsSize : 30,
+    selectedColumnsSize : 30,
     orderByColumnsSize : 10,
     groupByColumnsSize : 10
 }
@@ -315,7 +319,10 @@ function addCriteria(parentNode) {
     renumberCriteria(id, 'add');
 
     //inserts new row after row where 'Add Criteria' button was clicked.
-    let newDiv = createNewElement('div', {'id': 'row.' + id, 'class': 'criteria-row'}, null);
+    let newDiv = createNewElement('div', {
+        'id': 'row.' + id, 
+        'class': 'criteria-row'
+    }, null);
 
     // create id input element
     let idInput = createNewElement('input', {
@@ -337,11 +344,19 @@ function addCriteria(parentNode) {
     newDiv.appendChild(parentInputId);
 
     // create conjunction select element
-    let optionAnd = createNewElement('option', {'value': 'And'}, null);
+    let optionAnd = createNewElement('option', {
+        'value': 'And'
+    }, null);
     optionAnd.innerHTML = 'And';
-    let optionOr = createNewElement('option', {'value': 'Or'}, null);
+    let optionOr = createNewElement('option', {
+        'value': 'Or'
+    }, null);
     optionOr.innerHTML = 'Or';
-    let conjunctionEl = createNewElement('select', {'id': `criteria${id}.conjunction`, 'name': `criteria[${id}].conjunction`, 'class': 'criteria-conjuction-and-operator'}, null);
+    let conjunctionEl = createNewElement('select', {
+        'id': `criteria${id}.conjunction`, 
+        'name': `criteria[${id}].conjunction`, 
+        'class': 'criteria-conjuction-and-operator'
+    }, null);
     conjunctionEl.appendChild(optionAnd);
     conjunctionEl.appendChild(optionOr);
     newDiv.appendChild(conjunctionEl);
@@ -376,7 +391,11 @@ function addCriteria(parentNode) {
     let optionIsNull =              createNewElement('option', {'value': 'isNull'}, null, 'is null');
     let optionIsNotNull =           createNewElement('option', {'value': 'isNotNull'}, null, 'is not null');
 
-    let operatorEl =                createNewElement('select', {'id': `criteria${id}.operator`, 'name': `criteria[${id}].operator`, 'class': 'criteria-conjuction-and-operator'}, null);
+    let operatorEl = createNewElement('select', {
+        'id': `criteria${id}.operator`, 
+        'name': `criteria[${id}].operator`, 
+        'class': 'criteria-conjuction-and-operator'
+    }, null);
     operatorEl.appendChild(optionEqual);
     operatorEl.appendChild(optionNotEqualTo);
     operatorEl.appendChild(optionGreaterThanOrEquals);
@@ -411,7 +430,7 @@ function addCriteria(parentNode) {
     // create 'Add Criteria' button
     let addCriteriaButton = createNewElement('input', {
         'type': 'button',
-        'value': 'Add Criteria',
+        'value': '+',
         'class': 'criteria-add-remove-buttons'
     }, null);
     addCriteriaButton.onclick = function () {
@@ -422,7 +441,7 @@ function addCriteria(parentNode) {
     // create 'Remove Criteria' button
     let removeCriteriaButton = createNewElement('input', {
         'type': 'button',
-        'value': 'Remove Criteria',
+        'value': 'X',
         'class': 'criteria-add-remove-buttons'
     }, null);
     removeCriteriaButton.onclick = function () {
@@ -596,8 +615,9 @@ function createNewElement(type, attributesMap, dataProperty, innerHtml=null) {
     return select;
 }
 
-function hideAllDivsExcept(divToShow) {
-    let phaseOutMilliseconds = 200;
+// divsToShow:  Array of strings.
+function hideAllDivsExcept(divsToShow) {
+    //let phaseOutMilliseconds = 200;
     let divs = [
         'queryTemplatesDiv',
         'tableColumns',
@@ -608,20 +628,24 @@ function hideAllDivsExcept(divToShow) {
         'otherOptionsDiv'
     ];
 
+    // Hide all divs in array above.
     for (var i=0; i<divs.length; i++) {
-        $('#' + divs[i]).hide(phaseOutMilliseconds)
+        $('#' + divs[i]).hide(scriptVariables['phaseOutMilliseconds'])
     }
 
-    $('#' + divToShow).show(phaseOutMilliseconds);
+    // Show all divs in divsToShow array.
+    for (var i=0; i<divsToShow.length; i++) {
+        $('#' + divsToShow[i]).show(scriptVariables['phaseOutMilliseconds']);
+    }
 }
 
 function renderStatementButtonsHTML() {
-    let queryTemplatesButton;
-    let schemasAndTablesButton;
-    let joinsButton;
-    let columnsButton;
-    let criteriaButton;
-    let otherOptionsButton;
+    let queryTemplatesButton = null;
+    let schemasAndTablesButton = null;
+    let joinsButton = null;
+    let columnsButton = null;
+    let criteriaButton = null;
+    let otherOptionsButton = null;
 
     if (scriptVariables['queryTemplates'] !== null) {
         let attributesMap = {
@@ -633,7 +657,7 @@ function renderStatementButtonsHTML() {
         queryTemplatesButton = createNewElement('button', attributesMap);
         queryTemplatesButton.innerHTML = 'Query Templates';
         queryTemplatesButton.onclick = function() {
-            hideAllDivsExcept('queryTemplatesDiv');
+            hideAllDivsExcept(['queryTemplatesDiv']);
         };
     }
 
@@ -647,7 +671,7 @@ function renderStatementButtonsHTML() {
         schemasAndTablesButton = createNewElement('button', attributesMap);
         schemasAndTablesButton.innerHTML = 'Schemas & Tables';
         schemasAndTablesButton.onclick = function() {
-            hideAllDivsExcept('schemasDiv');
+            hideAllDivsExcept(['schemasDiv', 'tablesDiv']);
         };
     }
 
@@ -661,7 +685,7 @@ function renderStatementButtonsHTML() {
         joinsButton = createNewElement('button', attributesMap);
         joinsButton.innerHTML = 'Joins';
         joinsButton.onclick = function() {
-            hideAllDivsExcept('joinsDiv');
+            hideAllDivsExcept(['joinsDiv']);
         };
     }
 
@@ -675,7 +699,7 @@ function renderStatementButtonsHTML() {
         columnsButton = createNewElement('button', attributesMap);
         columnsButton.innerHTML = 'Columns';
         columnsButton.onclick = function() {
-            hideAllDivsExcept('tableColumns');
+            hideAllDivsExcept(['tableColumns']);
         };
     }
 
@@ -689,7 +713,7 @@ function renderStatementButtonsHTML() {
         criteriaButton = createNewElement('button', attributesMap);
         criteriaButton.innerHTML = 'Criteria';
         criteriaButton.onclick = function() {
-            hideAllDivsExcept('criteria');
+            hideAllDivsExcept(['criteria']);
         };
     }
 
@@ -704,7 +728,7 @@ function renderStatementButtonsHTML() {
         otherOptionsButton = createNewElement('button', attributesMap);
         otherOptionsButton.innerHTML = 'Other Options';
         otherOptionsButton.onclick = function() {
-            hideAllDivsExcept('otherOptionsDiv');
+            hideAllDivsExcept(['otherOptionsDiv']);
         };
     }
 
@@ -720,7 +744,10 @@ function renderStatementButtonsHTML() {
         scriptVariables['formSubmissionFunction']();
     };
 
-    let div = createNewElement('div', {'id': 'statementButtonsDiv', 'class': 'statement-buttons-div'});
+    let div = createNewElement('div', {
+        'id': 'statementButtonsDiv', 
+        'class': 'statement-buttons-div'
+    });
     if (queryTemplatesButton !== null) div.appendChild(queryTemplatesButton);
     if (schemasAndTablesButton !== null) div.appendChild(schemasAndTablesButton);
     if (joinsButton !== null) div.appendChild(joinsButton);
@@ -778,7 +805,10 @@ function renderSchemaHTML() {
         let label = createNewElement('label', {'for': 'schemas'});
         label.innerHTML = 'Database Schemas';
 
-        let div = createNewElement('div', {'id': 'schemasDiv', 'class': 'schemas-div'});
+        let div = createNewElement('div', {
+            'id': 'schemasDiv', 
+            'class': 'schemas-div'
+        });
         div.appendChild(label);
         div.appendChild(select);
 
@@ -807,10 +837,15 @@ function renderTablesHTML() {
             }
         };
 
-        let label = createNewElement('label', {'for': 'table'});
+        let label = createNewElement('label', {
+            'for': 'table'
+        });
         label.innerHTML = 'Database Tables';
 
-        let div = createNewElement('div', {'id': 'tablesDiv', 'class': 'tables-div'});
+        let div = createNewElement('div', {
+            'id': 'tablesDiv', 
+            'class': 'tables-div'
+        });
         div.appendChild(label);
         div.appendChild(select);
 
@@ -852,13 +887,49 @@ function renderJoinsHTML() {
             let newJoinType = createNewElement('input', {
                 'id': `joins${maxId}.joinType`, 
                 'name': `joins[${maxId}].joinType`, 
-                'hidden': 'true', 'value': 'outer'
+                'hidden': 'true', 
+                'value': 'left_join_excluding'
             });
             let newJoinImage = createNewElement('img', {
                 'id': `joins${maxId}.image`, 
                 'name': `joins[${maxId}].image`, 
-                'src': './images/outer_join.png', 'width': '100', 'height': '80'
+                'src': './images/left_join_excluding.png', 
+                'width': '100', 
+                'height': '80'
             });
+            newJoinImage.onclick = function() {
+                let images = [
+                    {'name': 'left_join_excluding',         'file_path': './images/left_join_excluding.png'},
+                    {'name': 'left_join',                   'file_path': './images/left_join.png'},
+                    {'name': 'inner_join',                  'file_path': './images/inner_join.png'},
+                    {'name': 'right_join',                  'file_path': './images/right_join.png'},
+                    {'name': 'right_join_excluding',        'file_path': './images/right_join_excluding.png'},
+                    {'name': 'full_outer_join',             'file_path': './images/full_outer_join.png'},
+                    {'name': 'full_outer_join_excluding',   'file_path': './images/full_outer_join_excluding.png'}
+                ];
+
+                let joinType = document.getElementById(`joins${maxId}.joinType`);
+                let currentJoinName = joinType.value;
+                let joinImage = document.getElementById(`joins${maxId}.image`);
+
+                // Set newJoinType and newJoinImage to next join name and file_path in array.
+                for (var i=0; i<images.length; i++) {
+                    if (images[i].name === currentJoinName) {
+                        // If index is less than last index, then get file_path of index + 1.
+                        // Else (if index is last index), then get first file_path in array.
+                        if (i < images.length-1) {
+                            joinType.setAttribute('value', images[i+1].name);
+                            joinImage.src = images[i+1].file_path;
+                            break;
+                        } else {
+                            joinType.setAttribute('value', images[0].name);
+                            joinImage.src = images[0].file_path;
+                            break;
+                        }
+                    }
+                }
+            };
+
             let newJoinParentColumn = createNewElement('select', {
                 'id': `joins${maxId}.parentJoinColumns`, 
                 'name': `joins[${maxId}].parentJoinColumns`
@@ -1074,26 +1145,42 @@ function renderAvailableColumnsHTML() {
         let labelAvailableColumns = createNewElement('label', {'for': 'availableColumns'});
         labelAvailableColumns.innerHTML = 'Table Columns';
 
-        let availableColumnsDiv = createNewElement('div', {'id': 'availableColumnsDiv', 'class': 'available-columns-div'});
+        let availableColumnsDiv = createNewElement('div', {
+            'id': 'availableColumnsDiv', 
+            'class': 'available-columns-div'
+        });
         availableColumnsDiv.appendChild(labelAvailableColumns);
         availableColumnsDiv.appendChild(selectAvailableColumns);
 
         // Create Add and Remove Columns Div and Button elements
-        let addColumnButton = createNewElement('button', {'id': 'addColumnsButton', 'name': 'addColumnsButton', 'type': 'button', 'class': 'available-columns-add-button'}, null);
+        let addColumnButton = createNewElement('button', {
+            'id': 'addColumnsButton', 
+            'name': 'addColumnsButton', 
+            'type': 'button', 
+            'class': 'available-columns-add-button'
+        }, null);
         addColumnButton.innerHTML = 'Add';
         addColumnButton.onclick = function() {
             let selectedColumns = getSelectedOptionsAsJSON('availableColumns');
             addSelectedColumns(selectedColumns);
         };
 
-        let removeColumnButton = createNewElement('button', {'id': 'removeColumnsButton', 'name': 'removeColumnsButton', 'type': 'button', 'class': 'available-columns-remove-button'}, null);
+        let removeColumnButton = createNewElement('button', {
+            'id': 'removeColumnsButton', 
+            'name': 'removeColumnsButton', 
+            'type': 'button', 'class': 
+            'available-columns-remove-button'
+        }, null);
         removeColumnButton.innerHTML = 'Remove';
         removeColumnButton.onclick = function() {
             let selectedColumns = getSelectedOptionsAsJSON('columns', 'indeces');
             removeSelectedColumn(selectedColumns);
         };
 
-        let addRemoveButtonsDiv = createNewElement('div', {'id': 'addRemoveColumns', 'class': 'available-columns-buttons-div'});
+        let addRemoveButtonsDiv = createNewElement('div', {
+            'id': 'addRemoveColumns', 
+            'class': 'available-columns-buttons-div'
+        });
         addRemoveButtonsDiv.appendChild(addColumnButton);
         addRemoveButtonsDiv.appendChild(createNewElement('br'));
         addRemoveButtonsDiv.appendChild(removeColumnButton);
@@ -1110,11 +1197,20 @@ function renderAvailableColumnsHTML() {
         let labelSelectedColumns = createNewElement('label', {'for': 'selectedColumns'});
         labelSelectedColumns.innerHTML = 'Selected Columns';
 
-        let selectedColumnsDiv = createNewElement('div', {'id': 'selectedColumnsDiv', 'class': 'selected-columns-div'});
+        let selectedColumnsDiv = createNewElement('div', {
+            'id': 'selectedColumnsDiv', 
+            'class': 'selected-columns-div'
+        });
         selectedColumnsDiv.appendChild(labelSelectedColumns);
         selectedColumnsDiv.appendChild(selectSelectedColumns);
 
-        let parentDiv = createNewElement('div', {'id': 'tableColumns', 'name': 'tableColumns', 'class': 'table-columns', 'width': '600px', 'height': '191px'}, null);
+        let parentDiv = createNewElement('div', {
+            'id': 'tableColumns', 
+            'name': 'tableColumns', 
+            'class': 'table-columns', 
+            'width': '600px', 
+            'height': '191px'
+        }, null);
         parentDiv.appendChild(availableColumnsDiv);
         parentDiv.insertAdjacentElement('beforeend', addRemoveButtonsDiv);
         parentDiv.insertAdjacentElement('beforeend', selectedColumnsDiv);
@@ -1124,10 +1220,18 @@ function renderAvailableColumnsHTML() {
 }
 
 function renderCriteriaHTML() {
-    let pEl = createNewElement('p', {'id': 'criteriaPEl', 'name': 'criteriaPEl'}, null);
-    pEl.innerHTML = 'Criteria';
+    let pEl = createNewElement('p', {
+        'id': 'criteriaPEl', 
+        'name': 'criteriaPEl'
+    }, null);
+    //pEl.innerHTML = 'Criteria';
 
-    let addRootCriteriaButton = createNewElement('button', {'id': 'addRootCriteriaButton', 'name': 'addRootCriteriaButton', 'type': 'button', 'class': 'add-root-criteria-button'}, null);
+    let addRootCriteriaButton = createNewElement('button', {
+        'id': 'addRootCriteriaButton', 
+        'name': 'addRootCriteriaButton', 
+        'type': 'button', 
+        'class': 'add-root-criteria-button'
+    }, null);
     addRootCriteriaButton.innerHTML = 'Add Root Criteria';
     addRootCriteriaButton.onclick = function () {
         addCriteria(null);
@@ -1317,12 +1421,10 @@ function getSelectedOptionsAsJSON(HtmlId, textOrIndeces='text') {
                 let obj = {};
                 obj['data'] = select.options[i].text;
                 results.push(obj);
-                //results['data'] = select.options[i].text;
             } else {
                 let obj = {};
                 obj['data'] = i;
                 results.push(obj);
-                //results['data'] = i;
             }
         }
     }
@@ -1357,10 +1459,23 @@ function buildRequestData() {
 
 renderHTML();
 
-if (scriptVariables['getQueryTemplateEndpoint'] !== null) {
-    getQueryTemplates();
+if (scriptVariables['landingDivs'] !== null) {
+    hideAllDivsExcept(scriptVariables['landingDivs']);
 }
 
-if (scriptVariables['getSchemaEndpoint'] !== null) {
-    getSchemas();
-}
+$(document).ready(function() {
+
+    setTimeout(function() {
+        if (scriptVariables['getQueryTemplateEndpoint'] !== null) {
+            getQueryTemplates();
+        }
+
+        if (scriptVariables['getSchemaEndpoint'] !== null) {
+            getSchemas();
+        } else if (scriptVariables('getTablesEndpoint') !== null) {
+            getTables();
+        }
+    }, scriptVariables['phaseOutMilliseconds'] + 200);
+});
+
+
