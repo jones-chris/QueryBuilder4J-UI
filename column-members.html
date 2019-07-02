@@ -1,0 +1,84 @@
+`
+<!--Column Members Modal-->
+<div id="cm-modal-${id}" name="cm-modal-${id}" class="column-members-modal">
+
+    <!--Reference to parent element-->
+    <input type="text" hidden="hidden" id="cm-modal-${id}-parentId" name="cm-modal-${id}-parentId" value="${parentId}">
+
+    <div id="columnMembersModalContent" name="columnMembersModalContent" class="column-members-modal-content">
+
+        <button type="button" id="cm-modal-${id}-close" name="cm-modal-${id}-close" class="column-members-modal-close-button" onclick="closeColumnMembers('cm-modal-${id}')">X</button>
+        <br>
+
+        <button type="button" id="cm-modal-${id}-add-subQuery" name="cm-modal-${id}-add-subQuery" class="column-members-modal-close-button" onclick="addSubQueryHTML('cm-modal-${id}-selectedMembers', 'cm-modal-${id}')">Add SubQuery</button>
+
+        <!--Search box area-->
+        <div class="column-members-modal-search">
+            <label for="search">Search</label>
+            <input type="text" id="cm-modal-${id}-search" placeholder="ex: Cap%" autofocus="autofocus"/>
+        </div>
+
+        <!--Limit and paging area-->
+        <div class="column-members-modal-pagination">
+            <input type="text" hidden="hidden" id="cm-modal-${id}-currentOffset" name="cm-modal-${id}-currentOffset" value="0">
+            <label for="columnMembersLimit">Limit</label>
+            <select name="cm-modal-${id}-limit" id="cm-modal-${id}-limit">
+                <option value="2">2</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+
+            <label for="columnMembersAscending">Ordering</label>
+            <select id="cm-modal-${id}-ascending" name="cm-modal-${id}-ascending">
+                <option value="true">A-Z,1-9</option>
+                <option value="false">Z-A,9-1</option>
+            </select>
+
+            <br>
+            <br>
+
+            <button type="button" id="cm-modal-${id}-priorPage" onclick="getPageMembers('cm-modal-${id}', true)" disabled>Prior Page</button>
+            <button type="button" id="cm-modal-${id}-nextPage" onclick="getPageMembers('cm-modal-${id}', false)">Next Page</button>
+        </div>
+
+        <!--Member selection area-->
+        <div class="column-members-modal-members">
+            <div class="column-members-modal-available-members">
+                <label for="availableMembers">Available Column Members</label>
+                <select name="cm-modal-${id}-availableMembers" id="cm-modal-${id}-availableMembers" size="20" multiple="multiple">
+                </select>
+            </div>
+
+            <div class="column-members-modal-add-remove-members">
+                <button type="button" id="cm-modal-${id}-addMembers" onclick="addOptionsToSelectElement('cm-modal-${id}-selectedMembers', getOptionsAsArray('cm-modal-${id}-availableMembers', 'text', true))"> >>> </button>
+               
+               <!-- removeSelectedColumn(getSelectedOptionsAsJSON('cm-modal-${id}-selectedMembers', 'indeces'), 'selectedColumnMembers', 'cm-modal-${id}-selectedMembers') -->
+                <button type="button" id="cm-modal-${id}-removeMembers" onclick="
+                    let allSelectedMembers = getOptionsAsArray('cm-modal-${id}-selectedMembers', 'text', false);
+                    let selectedMemberIndex = getOptionsAsArray('cm-modal-${id}-selectedMembers', 'indeces', true);
+                    allSelectedMembers.splice(selectedMemberIndex, 1);
+                    syncSelectOptionsWithDataModel('cm-modal-${id}-selectedMembers', allSelectedMembers);"> <<< </button>
+            </div>
+
+            <div class="column-members-modal-selected-members">
+                <label for="selectedMembers">Selected Column Members</label>
+                <select id="cm-modal-${id}-selectedMembers" name="cm-modal-${id}-selectedMembers" size="20">
+                </select>
+            </div>
+
+            <div class="column-members-modal-up-down-members">
+                <button type="button" id="cm-modal-${id}-moveUp" onclick="moveSelectedColumn('cm-modal-${id}-selectedMembers', 'selectedColumnMembers', true)">Move Up</button>
+                <button type="button" id="cm-modal-${id}-moveDown" onclick="moveSelectedColumn('cm-modal-${id}-selectedMembers', 'selectedColumnMembers', false)">Move Down</button>
+            </div>
+        </div>
+
+        <!--Submission and Cancel button area-->
+        <div class="column-members-modal-submit">
+            <input type="button" value="OK" id="cm-modal-${id}-ok" onclick="setCriteriaFilterWithColumnMembers('cm-modal-${id}-selectedMembers', '${parentId}'); closeColumnMembers('cm-modal-${id}');"/>
+            <button type="button" id="cm-modal-${id}-cancel" onclick="closeColumnMembers('cm-modal-${id}')">Cancel</button>
+        </div>
+    </div>
+</div>
+`

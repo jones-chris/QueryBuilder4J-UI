@@ -1,3 +1,107 @@
+.sub-query-modal-parameter-description {
+    word-break: break-all;
+ }
+
+.sub-query-modal-query-template {
+    margin-bottom: 20px;
+}
+
+.column-members-modal {
+    clear: both;
+    text-align: center;
+    padding-top: 20px;
+    z-index: 3;
+    /*display: none;*/
+    padding-top: 100px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.column-members-modal table {
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+.column-members-modal-content {
+    margin: auto;
+    background-color: #fff;
+    position: relative;
+    padding: 0;
+    outline: 0;
+    width: 800px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.column-members-modal-close-button {
+    float: right;
+    margin-right: 15px;
+}
+
+.column-members-modal-pagination {
+    padding-top: 10px;
+    padding-left: 10px;
+}
+
+.column-members-modal-members {
+    margin-top: 20px;
+}
+
+.column-members-modal-members select {
+    width: 200px;
+    float: left;
+}
+
+.column-members-modal-available-members {
+    padding-left: 20%;
+    display: grid;
+    float: left;
+}
+
+.column-members-modal-add-remove-members {
+    display: grid;
+    float: left;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 60px;
+}
+
+.column-members-modal-add-remove-members * {
+    margin-bottom: 10px;
+}
+
+.column-members-modal-selected-members {
+    display: grid;
+    float: left;
+}
+
+.column-members-modal-up-down-members {
+    display: grid;
+    float: left;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 60px;
+}
+
+.column-members-modal-up-down-members * {
+    margin-bottom: 10px;
+}
+
+.column-members-modal-submit {
+    clear: both;
+    padding-top: 20px;
+}
+
+.column-members-modal-submit * {
+    margin-right: 10px;
+}
+
 .criteria-select-and-input {
     width: 140px;
     margin-left: 10px;
@@ -24,12 +128,6 @@
 }
 
 .criteria-div {
-    /*width: 1500px;*/
-    /*border-style: ridge;*/
-    /*box-sizing: border-box;*/
-    /*display: inline-grid;*/
-    /*margin-top: 40px;*/
-    border-style: groove;
     width: 1000px;
 }
 
@@ -49,32 +147,46 @@
 
 #queryTemplates {
     text-align: center;
-    width: 200px; 
+    width: 200px;
+}
+
+.query-templates-div {
+    text-align: center;
+    margin-top: 30px;
 }
 
 #availableColumnsDiv {
     float: left;
-    display: grid;
-    width: 200px;
+    /*display: grid;*/
+    width: 300px;
+    padding-left: 5%;
 }
 
 #addRemoveColumns {
     float: left;
-    width: 50px;
+    width: 10%;
 }
 
 #schemasDiv {
     clear: both;
     float: left;
-    display: grid;
-    width: 200px;
+    width: 300px;
+    padding-left: 5%;
+}
+
+#schemasDiv select {
+    width: 100%;
 }
 
 #tablesDiv {
-    float: left;
     display: grid;
-    width: 200px;
     margin-left: 50px;
+    float: right;
+    width: 45%;
+}
+
+#tablesDiv select {
+    width: 300px;
 }
 
 #joinsDiv {
@@ -94,12 +206,12 @@
 
 #selectedColumnsDiv {
     float: left;
-    width: 200px;
+    width: 300px;
     display: grid;
 }
 
 #availableColumns {
-    width: 200px;
+    width: 100%;
 }
 
 #selectedColumns {
@@ -112,7 +224,8 @@
 
 #otherOptionsDiv * {
     text-align: center;
-    margin-bottom: 20px;
+    /*margin-bottom: 20px;*/
+    margin-top: 5px;
 }
 
 #statementButtonsDiv * {
@@ -123,262 +236,20 @@
     margin-top: 20px;
 }
 
-/* 
-
-.criteria-select-and-input {
-    width: 140px;
-    margin-left: 20px;
-    margin-right: 20px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.select-tables {
-    width: auto;
-}
-
-.select-columns {
-    border-style: groove;
-    width: fit-content;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-.criteria-row {
-    padding-bottom: 10px;
-}
-
-.tables-and-columns-div {
-    display: inline-flex;
-}
-
-nav {
-  background: #000;
-  text-align: center;
-  color: lime;
-}
-
-.form-control {
-    display: block;
-    width: fit-content;
-    height: calc(2.25rem + 2px);
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #5a5a5a;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: 0.4rem;
-    -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-    transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-  }
-
-  .custom-control-input {
-    position: absolute;
-    z-index: -1;
-    opacity: 0;
-  }
-
-  .query-templates-div {
-    text-align: left;
-  }
-
-  .schemas-div {
-    text-align: left;
-  }
-
-  .tables-div {
-      text-align: left;
-  }
-
-  .joins-div {
-      text-align: center;
-  }
-
-  .available-columns-div {
-      text-align: left;
-  }
-
-  .selected-columns-div {
-    text-align: left;
-} 
-
-/*.criteria-row {
-    padding-left: 0px;
-}*/
-/* 
-.query-templates-div {
-    float: left;
-    width: 150px;
-    display: inline-grid;
-    padding-top: 10px;
-}
-
-.schemas-div {
-    clear: both;
-    display: block;
-    padding-top: 10px;
-}
-
-.tables-div {
-    display: inline-grid;
-    padding-top: 10px;
-}
-
-.available-columns-div {
-    float: left;
-    width: 150px;
-}
-
-.selected-columns-div {
-    float: left;
-    width: 150px;
-}
-
-.available-columns-buttons-div {
-    float: left;
-    width: 150px;
-}
-
-.available-columns-add-button {
-    display: block;
-    margin-top: 50px;
-    margin-bottom: 20px;
-}
-
-.other-options-div {
-    /* display: inline; */
-    /* float: left;
-    margin-left: 200px;
-    padding-top: 10px; */
-/* } */
-
-/* label {
-    display: block;
-} */ 
-
-/* select {
-    width: fit-content;
-} */
-
-/* #queryBuilder select { 
-    width: 200px; 
-} */
-
-
-
-
-
-
-/*NEW*/
-
-
-
-
-
-
-
-/*#queryTemplates {
-    width: 200px; 
-}
-
-#availableColumns {
-    width: 200px;
-}
-
-#selectedColumns {
-    width: 200px;
-}
-
-#schemas {
-    width: 200px;
-}
-
-#tables {
-    width: 200px;
-}
-
-.query-templates-div {
-    display: inline-grid;
-}
-
-.schemas-div {
-    display: inline-grid;
-    padding-top: 10px;
-}
-
-.tables-div {
-    display: inline-grid;
-    padding-top: 10px;
-}
-
-.available-columns-div {
-    display: inline-grid;
-}
-
-.selected-columns-div {
-    display: inline-grid;
-}
-
-.table-columns {
-    float: right;
-    display: inline-flex;
-}
-
-.available-columns-buttons-div {
-    padding-top: 70px;
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-.available-columns-add-button {
-    width: 65px;
-    margin-bottom: 20px;
-}
-
-.available-columns-remove-button {
-    width: 65px;
-}
-
-.criteria-div {
-    width: 1500px;
-    border-style: ridge;
-    box-sizing: border-box;
-    display: inline-grid;
-    margin-top: 40px;
-}
-
-.add-root-criteria-button {
-    width: 150px;
-    margin-left: 30px;
-}
-
-.other-options-div {
-    float: right;
-    width: calc(100% - 1500px);
-    padding-top: 40px;
-}
-
-#otherOptionsDiv select {
-    width: 60px;
-}
-
-#otherOptionsDiv > * {
-    padding-left: 20px;
-    margin-bottom: 20px;
-}*/
-
 .run-query-button {
     margin-top: 30px;
 }
 
 .run-query-div {
     text-align: center;
+}
+
+.save-query-templates-div {
+    text-align: center;
+}
+
+.save-as-query-template-button {
+    margin-top: 30px;
 }
 
 #criteriaPEl {
@@ -414,7 +285,6 @@ nav {
 }
 
 .join-row {
-    border-style: groove;
     text-align: center;
 }
 

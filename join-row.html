@@ -1,0 +1,19 @@
+`
+<div id="join-row${id}" name="join-row${id}" class="join-row">
+	<button id="joins${id}.deleteButton" name="joins[${id}].deleteButton" class="delete-join-button" type="button">X</button>
+	<input id="joins${id}.joinType" name="joins[${id}].joinType" hidden="true" value="${joinType}">
+	<select id="joins${id}.parentTable" name="joins[${id}].parentTable">
+		<option value="null"></option>
+	</select>
+	<img id="joins${id}.image" name="joins[${id}].image" src="${joinImageUrl}" width="100" height="80">
+	<select id="joins${id}.targetTable" name="joins[${id}].targetTable">
+		<option value="null"></option>
+	</select>
+	<div>
+		<select id="joins${id}.parentJoinColumns" name="joins[${id}].parentJoinColumns"></select>
+		<b> = </b>
+		<select id="joins${id}.targetJoinColumns" name="joins[${id}].targetJoinColumns"></select>
+		<button id="joins${id}.addParentAndTargetColumn" name="joins[${id}].addParentAndTargetColumn" class="add-parent-and-target-column" type="button">+</button>
+	</div>
+</div>
+`

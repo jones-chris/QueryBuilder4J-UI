@@ -1,0 +1,31 @@
+`
+<div id="row.${id}" class="criteria-row">
+	<input type="hidden" id="criteria${id}.id" name="criteria[${id}].id" value="${id}">
+	<input type="hidden" id="criteria${id}.parentId" name="criteria[${id}].parentId" value="${parentId}">
+	<select id="criteria${id}.conjunction" name="criteria[${id}].conjunction" class="criteria-conjuction-and-operator">
+		<option value="And">And</option>
+		<option value="Or">Or</option>
+	</select><input type="hidden" id="criteria${id}.frontParenthesis" name="criteria[${id}].frontParenthesis">
+	<select id="criteria${id}.column" name="criteria[${id}].column" class="criteria-column-and-filter">
+	</select>
+	<select id="criteria${id}.operator" name="criteria[${id}].operator" class="criteria-conjuction-and-operator">
+		<option value="equalTo">=</option>
+		<option value="notEqualTo">&lt;&gt;</option>
+		<option value="greaterThanOrEquals">&gt;=</option>
+		<option value="lessThanOrEquals">&lt;=</option>
+		<option value="greaterThan">&gt;</option>
+		<option value="lessThan">&lt;</option>
+		<option value="like">like</option>
+		<option value="notLike">not like</option>
+		<option value="in">in</option>
+		<option value="notIn">not in</option>
+		<option value="isNull">is null</option>
+		<option value="isNotNull">is not null</option>
+	</select>
+	<input id="criteria${id}.filter" name="criteria[${id}].filter" class="criteria-column-and-filter">
+	<input type="hidden" id="criteria${id}.endParenthesis" name="criteria[${id}].endParenthesis">
+	<input type="button" id="addCriteria-${id}" value="+" class="criteria-add-remove-buttons">
+	<input type="button" id="removeCriteria-${id}" value="X" class="criteria-add-remove-buttons">
+	<input type="button" id="columnMembers-${id}" value="Column Members" class="criteria-add-remove-buttons">
+</div>
+`
