@@ -4,6 +4,7 @@ const scriptVariables = {
     renderHtmlAnchorElement : 'queryBuilderAnchor',
     // The base URL where the join png images are held.  Set the value to 'https://s3.amazonaws.com/qb4j-ui/images/' for official qb4j images.
     htmlFragmentUrl: 'https://s3.amazonaws.com/qb4j-ui/v1/',
+    // htmlFragmentUrl: 'http://localhost:5/',
     // Set contents of array to any of the following: 'queryTemplatesDiv', 'schemasDiv', 'tablesDiv', 'joinsDiv', 'columnsDiv',
     // 'criteriaDiv', or 'otherOptionsDiv' in order to show these divs when the page is rendered.
     landingDivs : ['schemasDiv', 'tablesDiv'],
